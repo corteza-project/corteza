@@ -31,6 +31,7 @@ type (
 		RequestRateLimit         int           `env:"AUTH_REQUEST_RATE_LIMIT"`
 		RequestRateWindowLength  time.Duration `env:"AUTH_REQUEST_RATE_WINDOW_LENGTH"`
 		CsrfSecret               string        `env:"AUTH_CSRF_SECRET"`
+		CsrfEnabled              bool          `env:"AUTH_CSRF_ENABLED"`
 		CsrfFieldName            string        `env:"AUTH_CSRF_FIELD_NAME"`
 		CsrfCookieName           string        `env:"AUTH_CSRF_COOKIE_NAME"`
 		DefaultClient            string        `env:"AUTH_DEFAULT_CLIENT"`
@@ -57,6 +58,7 @@ func Auth() (o *AuthOpt) {
 		RequestRateLimit:         30,
 		RequestRateWindowLength:  time.Minute,
 		CsrfSecret:               getSecretFromEnv("csrf secret"),
+		CsrfEnabled:              true,
 		CsrfFieldName:            "same-site-authenticity-token",
 		CsrfCookieName:           "same-site-authenticity-token",
 		DefaultClient:            "corteza-webapp",

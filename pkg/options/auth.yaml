@@ -115,11 +115,16 @@ props:
       Generated secret will change if you change any of these variables.
       ====
 
+  - name: csrfEnabled
+    type: bool
+    default: true
+    description: |-
+      Enable CSRF protection
+
   - name: csrfFieldName
     default: "same-site-authenticity-token"
     description: |-
       Form field name used for CSRF protection
-
 
   - name: csrfCookieName
     default: "same-site-authenticity-token"

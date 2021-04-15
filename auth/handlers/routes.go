@@ -36,13 +36,15 @@ func (h *AuthHandlers) MountHttpRoutes(r chi.Router) {
 
 		r.Group(func(r chi.Router) {
 			// all routes protected with CSRF:
-			r.Use(csrf.Protect(
-				[]byte(h.Opt.CsrfSecret),
-				csrf.SameSite(csrf.SameSiteStrictMode),
-				csrf.Secure(h.Opt.SessionCookieSecure),
-				csrf.FieldName(h.Opt.CsrfFieldName),
-				csrf.CookieName(h.Opt.CsrfCookieName),
-			))
+			if h.Opt.CsrfEnabled {
+				r.Use(csrf.Protect(
+					[]byte(h.Opt.CsrfSecret),
+					csrf.SameSite(csrf.SameSiteStrictMode),
+					csrf.Secure(h.Opt.SessionCookieSecure),
+					csrf.FieldName(h.Opt.CsrfFieldName),
+					csrf.CookieName(h.Opt.CsrfCookieName),
+				))
+			}
 
 			r.Get(l.Profile, h.handle(authOnly(h.profileForm)))
 			r.Post(l.Profile, h.handle(authOnly(h.profileProc)))

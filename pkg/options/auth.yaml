@@ -93,7 +93,7 @@ props:
 
   - name: requestRateLimit
     type: int
-    default: 30
+    default: 60
     description: |-
       How many requests from a cerain IP address are allowed in a time window.
       Set to zero to disable
@@ -148,7 +148,6 @@ props:
       If not it uses statically embedded files.
 
       When empty path is set (default value), embedded files are used.
-
 
   - name: developmentMode
     type: bool

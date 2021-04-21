@@ -46,6 +46,7 @@ type (
 
 	userAccessController interface {
 		CanCreateUser(context.Context) bool
+		CanSearchUsers(context.Context) bool
 		CanReadUser(context.Context, *types.User) bool
 		CanUpdateUser(context.Context, *types.User) bool
 		CanDeleteUser(context.Context, *types.User) bool
@@ -289,6 +290,10 @@ func (svc user) Find(ctx context.Context, filter types.UserFilter) (uu types.Use
 	}
 
 	err = func() error {
+		if !svc.ac.CanSearchUsers(ctx) {
+			return UserErrNotAllowedToSearch()
+		}
+
 		if filter.Deleted > 0 {
 			// If list with deleted users is requested
 			// user must have access permissions to system (ie: is admin)

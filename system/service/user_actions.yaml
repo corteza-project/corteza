@@ -81,6 +81,10 @@ errors:
     message: "not allowed to read this user"
     log: "failed to read {user.handle}; insufficient permissions"
 
+  - error: notAllowedToSearch
+    message: "not allowed to search for users"
+    log: "failed to search for users; insufficient permissions"
+
   - error: notAllowedToListUsers
     message: "not allowed to list users"
     log: "failed to list user; insufficient permissions"

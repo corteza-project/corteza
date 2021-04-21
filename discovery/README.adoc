@@ -1,0 +1,137 @@
+= Corteza Discovery
+
+This package provides API endpoints and business logic to serve indexable resources.
+
+== Access control
+
+When Discovery capabilities are installed to Corteza server three combinations of clients, roles and users are provisioned:
+
+- one auth client, role and user for *public* indexing
+- one auth client, role and user for *protected* indexing
+- one auth client, role and user for *private* indexing
+
+This setup enables discovery indexing service to connect to the API with restricted privileges and have access only to explicitly allowed resources.
+
+=== Additional limitations and protection of auth client
+
+Each role is configured on each client as forced role and each client as impersonated user.
+Auth clients are configured with `client_credentials` grant.
+
+Additionally, auth clients only have `discovery` scope enabled.
+
+
+=== Use of auth clients on indexer
+
+Indexer supports configuration for multiple indexes with different access credentials.
+This allows it to set up different indexing schemas and control how what data is available in an index.
+
+
+
+
+
+
+
+
+
+
+== Index field mapping
+
+=== Static mapping
+
+API only serves dynamic index mappings for different types of records (per module).
+Static mappings for resources like users, applications, modules, namespaces are not served from Corteza server API.
+
+
+
+
+
+
+== Terminology
+Index access restrictions or `iar`::
+Can be one of public, private or protected.
+Some resource-types can not be accessed publicly.
+
+Index name::
+  Logicaly structured name of the resource index:
+
+  <prefix-for-distinction>-<iar>-<resource-like-suffix>
+
+  corteza-private-system-users
+  corteza-private-compose-records-1-2 (namespaceID: 1, moduleID: 2)
+
+
+
+
+== REST API Endpoints
+
+/api/discovery/resources/<iar>::
+Returns resource types that can be indexable
+Used when indexer need to crawl over all resources.
+
+/api/discovery/resources/<iar>/types/<resource-type>::
+IDs of indexable resources that can be indexed for a certain access restrictions.
+Used when indexer need to crawl over all resources.
+
+/api/discovery/resources/<iar>/<resource-type>/<id>::
+Indexable resource with all details that can be indexed for a certain access restrictions.
+
+/api/discovery/feed/<iar>?limit=<limit:uint>&cursor=<cursor:uint64>::
+Feed of indexable resources that were changed from the cursor on.
+Contains resource type, id and index ID that can be used for cursor
+
+
+== Store structure
+
+.Resource updates (`discovery_update_feed`)
+[cols="1,1,2"]
+|===
+| Field | Type |
+
+| `id`
+| Uint64
+| PK, pagination cursor
+
+| `iar`
+| Int (bitmask)
+| Index access restriction: is public, protected and/or private
+
+| `index_suffix`
+| String
+| Resource type
+
+| `resource_id`
+| Uint64
+| Resource identifier
+
+| `removed`
+| Boolean
+| Was resource removed?
+
+| `created_at`
+| Timestamp
+| Data retention control
+|===
+
+== Data flow
+
+We utilize EventBus to handle updates to indexable resources table when resources are created (`afterCreate`), or updated (`afterUpdate`, `afterDelete`).
+
+
+[NOTE]
+====
+Corteza resources that support soft-delete are only removed from public and protected indexes.
+Private index keeps deleted resources to allow searching through them.
+====
+
+
+== Lifecycle
+
+=== Server start
+. Register garbage collector that removes
+. Register garbage collection
+
+=== Server running
+
+
+=== Server stop
+

@@ -1,0 +1,62 @@
+---
+
+endpoints:
+- path: "/mappings"
+  entrypoint: mappings
+  title: Index mappings
+  apis:
+    - name: list
+      method: GET
+      title: List of all
+      path: "/"
+
+
+- path: "/resources"
+  entrypoint: resources
+  title: Resources
+  parameters:
+    get:
+      - { name: limit,        type: "uint",     title: "Limit" }
+      - { name: pageCursor,   type: "string",   title: "Page cursor" }
+  apis:
+    - name: systemUsers
+      method: GET
+      title: Resource
+      path: "/system/users"
+
+    - name: composeNamespaces
+      method: GET
+      title: Resource
+      path: "/compose/namespaces"
+
+    - name: composeModules
+      method: GET
+      title: Resource
+      path: "/compose/namespaces/{namespaceID}/modules"
+      parameters:
+        path:
+          - { name: namespaceID, type: uint64, title: Namespace ID }
+
+    - name: composeRecords
+      method: GET
+      title: Resource
+      path: "/compose/namespaces/{namespaceID}/modules/{moduleID}/records"
+      parameters:
+        path:
+          - { name: namespaceID, type: uint64, title: Namespace ID }
+          - { name: moduleID,    type: uint64, title: Module ID }
+
+- path: "/feed"
+  entrypoint: feed
+  title: Change feed
+
+  parameters:
+    get:
+      - { name: limit,        type: "uint",     title: "Limit" }
+      - { name: pageCursor,   type: "string",   title: "Page cursor" }
+
+  apis:
+    - name: changes
+      method: GET
+      title: List of resource changes that should be indexed
+      path: "/"

@@ -694,6 +694,38 @@ func UserErrNotAllowedToRead(mm ...*userActionProps) *errors.Error {
 	return e
 }
 
+// UserErrNotAllowedToSearch returns "system:user.notAllowedToSearch" as *errors.Error
+//
+//
+// This function is auto-generated.
+//
+func UserErrNotAllowedToSearch(mm ...*userActionProps) *errors.Error {
+	var p = &userActionProps{}
+	if len(mm) > 0 {
+		p = mm[0]
+	}
+
+	var e = errors.New(
+		errors.KindInternal,
+
+		p.Format("not allowed to search for users", nil),
+
+		errors.Meta("type", "notAllowedToSearch"),
+		errors.Meta("resource", "system:user"),
+
+		// action log entry; no formatting, it will be applied inside recordAction fn.
+		errors.Meta(userLogMetaKey{}, "failed to search for users; insufficient permissions"),
+		errors.Meta(userPropsMetaKey{}, p),
+
+		errors.StackSkip(1),
+	)
+
+	if len(mm) > 0 {
+	}
+
+	return e
+}
+
 // UserErrNotAllowedToListUsers returns "system:user.notAllowedToListUsers" as *errors.Error
 //
 //

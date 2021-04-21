@@ -161,6 +161,61 @@ type (
 				}
 			}
 		} `kv:"compose" json:"compose"`
+
+		Discovery struct {
+			// Enable indexing
+			Enabled bool
+
+			SystemUsers struct {
+				// Enable indexing of users
+				Enabled bool
+			} `kv:"system-users"`
+
+			SystemApplications struct {
+				// Enable indexing of applications
+				Enabled bool
+			} `kv:"system-applications"`
+
+			SystemRoles struct {
+				// Enable indexing of roles
+				Enabled bool
+			} `kv:"system-roles"`
+
+			SystemTemplates struct {
+				// Enable indexing of templates
+				Enabled bool
+			} `kv:"system-templates"`
+
+			AutomationWorkflows struct {
+				// Enable indexing of workflows
+				Enabled bool
+			} `kv:"automation-workflows"`
+
+			ComposeNamespaces struct {
+				// Enable indexing of compose namespaces
+				Enabled bool
+			} `kv:"compose-namespaces"`
+
+			ComposeCharts struct {
+				// Enable indexing of compose charts
+				Enabled bool
+			} `kv:"compose-charts"`
+
+			ComposePages struct {
+				// Enable indexing of compose pages
+				Enabled bool
+			} `kv:"compose-pages"`
+
+			ComposeModules struct {
+				// Enable indexing of compose modules
+				Enabled bool
+			} `kv:"compose-modules"`
+
+			ComposeRecords struct {
+				// Enable indexing of compose records
+				Enabled bool
+			} `kv:"compose-records"`
+		} `kv:"discovery"`
 	}
 
 	ExternalAuthProviderSet []*ExternalAuthProvider

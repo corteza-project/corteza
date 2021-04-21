@@ -69,6 +69,18 @@ func (svc accessControl) CanCreateUser(ctx context.Context) bool {
 	return svc.can(ctx, types.SystemRBACResource, "user.create")
 }
 
+func (svc accessControl) CanSearchUsers(ctx context.Context) bool {
+	return svc.can(ctx, types.SystemRBACResource, "user.search")
+}
+
+func (svc accessControl) CanSearchRoles(ctx context.Context) bool {
+	return svc.can(ctx, types.SystemRBACResource, "role.search")
+}
+
+func (svc accessControl) CanSearchApplications(ctx context.Context) bool {
+	return svc.can(ctx, types.SystemRBACResource, "application.search")
+}
+
 func (svc accessControl) CanCreateRole(ctx context.Context) bool {
 	return svc.can(ctx, types.SystemRBACResource, "role.create")
 }
@@ -87,6 +99,10 @@ func (svc accessControl) CanGlobalFlagApplication(ctx context.Context) bool {
 
 func (svc accessControl) CanCreateAuthClient(ctx context.Context) bool {
 	return svc.can(ctx, types.SystemRBACResource, "auth-client.create")
+}
+
+func (svc accessControl) CanSearchAuthClient(ctx context.Context) bool {
+	return svc.can(ctx, types.SystemRBACResource, "auth-client.search")
 }
 
 func (svc accessControl) CanCreateTemplate(ctx context.Context) bool {
@@ -295,12 +311,17 @@ func (svc accessControl) Whitelist() rbac.Whitelist {
 		"settings.read",
 		"settings.manage",
 		"auth-client.create",
+		"auth-client.search",
 		"role.create",
+		"role.search",
 		"user.create",
+		"user.search",
 		"application.create",
+		"application.search",
 		"application.flag.self",
 		"application.flag.global",
 		"template.create",
+		"template.search",
 		"reminder.assign",
 		"messagebus-queue.create",
 	)

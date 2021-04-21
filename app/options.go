@@ -24,6 +24,7 @@ type (
 		Eventbus    options.EventbusOpt
 		Messagebus  options.MessagebusOpt
 		Federation  options.FederationOpt
+		Discovery   options.DiscoveryOpt
 		SCIM        options.SCIMOpt
 		Workflow    options.WorkflowOpt
 	}
@@ -49,6 +50,7 @@ func NewOptions() *Options {
 		Eventbus:    *options.Eventbus(),
 		Messagebus:  *options.Messagebus(),
 		Federation:  *options.Federation(),
+		Discovery:   *options.Discovery(),
 		SCIM:        *options.SCIM(),
 		Workflow:    *options.Workflow(),
 	}

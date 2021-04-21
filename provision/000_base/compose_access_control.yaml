@@ -2,12 +2,17 @@ allow:
   everyone:
     compose:
       - access
+      - namespace.search
 
     compose:namespace:
       - read
+      - module.search
+      - chart.search
+      - page.search
 
     compose:module:
       - read
+      - record.search
 
     compose:page:
       - read
@@ -22,6 +27,7 @@ allow:
       - settings.read
       - settings.manage
       - namespace.create
+      - namespace.search
 
     compose:namespace:
       - read

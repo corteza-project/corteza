@@ -1,0 +1,5 @@
+props:
+  - name: Enabled
+    type: bool
+    default: false
+    description: Enable discovery endpoints

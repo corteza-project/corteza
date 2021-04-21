@@ -1,0 +1,24 @@
+deny:
+  indexer_private:
+    system:
+      - application.search
+      - auth-client.search
+      - user.search
+      - template.search
+      - role.search
+
+  indexer_protected:
+    system:
+      - application.search
+      - auth-client.search
+      - user.search
+      - template.search
+      - role.search
+
+  indexer_public:
+    system:
+      - application.search
+      - auth-client.search
+      - user.search
+      - template.search
+      - role.search

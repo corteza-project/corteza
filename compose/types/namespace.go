@@ -3,13 +3,11 @@ package types
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"time"
-
+	discovery "github.com/cortezaproject/corteza-server/discovery/types"
 	"github.com/cortezaproject/corteza-server/pkg/filter"
-
-	"github.com/pkg/errors"
-
 	"github.com/cortezaproject/corteza-server/pkg/rbac"
+	"github.com/pkg/errors"
+	"time"
 )
 
 type (
@@ -28,6 +26,8 @@ type (
 	}
 
 	NamespaceFilter struct {
+		NamespaceID []uint64 `json:"moduleID"`
+
 		Query string `json:"query"`
 		Slug  string `json:"slug"`
 		Name  string `json:"name"`
@@ -51,6 +51,50 @@ type (
 	NamespaceMeta struct {
 		Subtitle    string `json:"subtitle,omitempty"`
 		Description string `json:"description,omitempty"`
+
+		Discovery struct {
+			// Index access restrictions for namespace and it's sub-resources
+			IndexAccessRestrictions struct {
+				// Can this namespace be indexed
+				Namespace discovery.Access `json:"namespace"`
+
+				// Can modules in this namespace be indexed
+				Modules discovery.Access `json:"modules"`
+
+				// Can records in this namespace be indexed
+				Records discovery.Access `json:"records"`
+			} `json:"indexAccessRestrictions"`
+
+			//Public struct {
+			//	// Allow public indexing of records in this namespace
+			//} `json:"public"`
+			//
+			//Protected struct {
+			//	// Allow protected indexing of this namespace
+			//	Namespace bool `json:"namespace"`
+			//	// Allow protected indexing of modules in this namespace
+			//	Modules bool `json:"modules"`
+			//	// Allow protected indexing of pages in this namespace
+			//	//Pages bool `json:"pages"`
+			//	// Allow protected indexing of charts in this namespace
+			//	//Charts bool `json:"charts"`
+			//	// Allow protected indexing of records in this namespace
+			//	Records bool `json:"records"`
+			//} `json:"protected"`
+			//
+			//Private struct {
+			//	// Allow private indexing of this namespace
+			//	Namespace bool `json:"namespace"`
+			//	// Allow private indexing of modules in this namespace
+			//	Modules bool `json:"modules"`
+			//	// Allow private indexing of pages in this namespace
+			//	//Pages bool `json:"pages"`
+			//	// Allow private indexing of charts in this namespace
+			//	//Charts bool `json:"charts"`
+			//	// Allow private indexing of records in this namespace
+			//	Records bool `json:"records"`
+			//} `json:"private"`
+		}
 
 		// Temporary icon & logo URLs
 		// @todo rework this when we rework attachment management

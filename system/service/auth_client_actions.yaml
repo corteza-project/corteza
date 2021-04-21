@@ -61,6 +61,13 @@ errors:
     message: "invalid ID"
     severity: warning
 
+  - error: unknownGrantType
+    message: "unknown grant type"
+
+
+  - error: unknownScope
+    message: "unknown scope"
+
   - error: notAllowedToRead
     message: "not allowed to read this auth client"
     log: "failed to read {authClient}; insufficient permissions"

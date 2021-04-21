@@ -1,5 +1,12 @@
 allow:
   everyone:
+    system:
+      - application.search
+      - auth-client.search
+      - user.search
+      - template.search
+      - role.search
+
     system:user:
       - read
       - unmask.email
@@ -19,17 +26,21 @@ allow:
 
   admins:
     system:
-      - access
       - grant
       - settings.read
       - settings.manage
       - application.create
-      - authClient.create
+      - auth-client.create
       - user.create
       - template.create
       - role.create
       - reminder.assign
       - messagebus-queue.create
+      - application.search
+      - authClient.search
+      - user.search
+      - template.search
+      - role.search
 
     system:application:
       - read

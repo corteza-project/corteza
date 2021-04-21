@@ -498,6 +498,66 @@ func AuthClientErrInvalidID(mm ...*authClientActionProps) *errors.Error {
 	return e
 }
 
+// AuthClientErrUnknownGrantType returns "system:auth-client.unknownGrantType" as *errors.Error
+//
+//
+// This function is auto-generated.
+//
+func AuthClientErrUnknownGrantType(mm ...*authClientActionProps) *errors.Error {
+	var p = &authClientActionProps{}
+	if len(mm) > 0 {
+		p = mm[0]
+	}
+
+	var e = errors.New(
+		errors.KindInternal,
+
+		p.Format("unknown grant type", nil),
+
+		errors.Meta("type", "unknownGrantType"),
+		errors.Meta("resource", "system:auth-client"),
+
+		errors.Meta(authClientPropsMetaKey{}, p),
+
+		errors.StackSkip(1),
+	)
+
+	if len(mm) > 0 {
+	}
+
+	return e
+}
+
+// AuthClientErrUnknownScope returns "system:auth-client.unknownScope" as *errors.Error
+//
+//
+// This function is auto-generated.
+//
+func AuthClientErrUnknownScope(mm ...*authClientActionProps) *errors.Error {
+	var p = &authClientActionProps{}
+	if len(mm) > 0 {
+		p = mm[0]
+	}
+
+	var e = errors.New(
+		errors.KindInternal,
+
+		p.Format("unknown scope", nil),
+
+		errors.Meta("type", "unknownScope"),
+		errors.Meta("resource", "system:auth-client"),
+
+		errors.Meta(authClientPropsMetaKey{}, p),
+
+		errors.StackSkip(1),
+	)
+
+	if len(mm) > 0 {
+	}
+
+	return e
+}
+
 // AuthClientErrNotAllowedToRead returns "system:auth-client.notAllowedToRead" as *errors.Error
 //
 //

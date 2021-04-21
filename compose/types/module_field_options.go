@@ -4,19 +4,37 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-	"strconv"
-
+	discovery "github.com/cortezaproject/corteza-server/discovery/types"
 	"github.com/pkg/errors"
+	"github.com/spf13/cast"
+	"strconv"
 )
 
 type (
 	ModuleFieldOptions map[string]interface{}
+
+	ModuleFieldOptionIndex struct {
+		// index values in this field for public, protected or private  searches
+		Access discovery.Access `json:"access"`
+
+		// Applicable to ref field kinds where we use nested/object type
+		// and we want to control how deep do we want to follow the references
+		NestingDepth map[string]bool `json:"nestingDepth,omitempty"`
+
+		// When embedding this field into a parent doc, do we skip it?
+		SkipNested bool `json:"skipNested,omitempty"`
+
+		// @todo we'll probably define aggregation/buckets params here
+		//       so that we can handle faceting properly?
+
+	}
 )
 
 const (
 	moduleFieldOptionExpression         = "expression"
 	moduleFieldOptionIsUnique           = "isUnique"
 	moduleFieldOptionIsUniqueMultiValue = "isUniqueMultiValue"
+	moduleFieldOptionIndex              = "index"
 
 	moduleFieldNumberOptionPrecision         = "precision"
 	moduleFieldNumberOptionPrecisionMin uint = 0
@@ -84,6 +102,15 @@ func (opt ModuleFieldOptions) Int64Def(key string, def int64) int64 {
 	return def
 }
 
+// Uint64 returns option value for key casted to uint64
+func (opt ModuleFieldOptions) Uint64(key string) uint64 {
+	if val, has := opt[key]; has {
+		return cast.ToUint64(val)
+	}
+
+	return 0
+}
+
 // Strings returns option value for key as slice of strings
 //
 // Invalid, non-existing are returned as nil
@@ -144,4 +171,15 @@ func (opt ModuleFieldOptions) Precision() (p uint) {
 
 func (opt ModuleFieldOptions) SetPrecision(p uint) {
 	opt[moduleFieldNumberOptionPrecision] = p
+}
+
+// IsUnique - should value in this field be unique across records?
+func (opt ModuleFieldOptions) Index() *ModuleFieldOptionIndex {
+	if val, has := opt[moduleFieldOptionIndex]; has {
+		if i, is := val.(*ModuleFieldOptionIndex); is {
+			return i
+		}
+	}
+
+	return nil
 }

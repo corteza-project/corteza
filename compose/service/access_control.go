@@ -61,6 +61,10 @@ func (svc accessControl) CanCreateNamespace(ctx context.Context) bool {
 	return svc.can(ctx, types.ComposeRBACResource, "namespace.create")
 }
 
+func (svc accessControl) CanSearchNamespaces(ctx context.Context) bool {
+	return svc.can(ctx, types.ComposeRBACResource, "namespace.search")
+}
+
 func (svc accessControl) CanReadNamespace(ctx context.Context, r *types.Namespace) bool {
 	return svc.can(ctx, r, "read", rbac.Allowed)
 }
@@ -79,6 +83,10 @@ func (svc accessControl) CanManageNamespace(ctx context.Context, r *types.Namesp
 
 func (svc accessControl) CanCreateModule(ctx context.Context, r *types.Namespace) bool {
 	return svc.can(ctx, r, "module.create")
+}
+
+func (svc accessControl) CanSearchModules(ctx context.Context, r *types.Namespace) bool {
+	return svc.can(ctx, r, "module.search")
 }
 
 func (svc accessControl) CanReadModule(ctx context.Context, r *types.Module) bool {
@@ -109,6 +117,10 @@ func (svc accessControl) CanReadRecord(ctx context.Context, r *types.Module) boo
 	return svc.can(ctx, r, "record.read")
 }
 
+func (svc accessControl) CanSearchRecords(ctx context.Context, r *types.Module) bool {
+	return svc.can(ctx, r, "record.search")
+}
+
 func (svc accessControl) CanUpdateRecord(ctx context.Context, r *types.Module) bool {
 	return svc.can(ctx, r, "record.update")
 }
@@ -119,6 +131,10 @@ func (svc accessControl) CanDeleteRecord(ctx context.Context, r *types.Module) b
 
 func (svc accessControl) CanCreateChart(ctx context.Context, r *types.Namespace) bool {
 	return svc.can(ctx, r, "chart.create")
+}
+
+func (svc accessControl) CanSearchChart(ctx context.Context, r *types.Namespace) bool {
+	return svc.can(ctx, r, "chart.search")
 }
 
 func (svc accessControl) CanReadChart(ctx context.Context, r *types.Chart) bool {
@@ -135,6 +151,10 @@ func (svc accessControl) CanDeleteChart(ctx context.Context, r *types.Chart) boo
 
 func (svc accessControl) CanCreatePage(ctx context.Context, r *types.Namespace) bool {
 	return svc.can(ctx, r, "page.create")
+}
+
+func (svc accessControl) CanSearchPage(ctx context.Context, r *types.Namespace) bool {
+	return svc.can(ctx, r, "page.search")
 }
 
 func (svc accessControl) CanReadPage(ctx context.Context, r *types.Page) bool {
@@ -210,6 +230,7 @@ func (svc accessControl) Whitelist() rbac.Whitelist {
 		types.ComposeRBACResource,
 		"grant",
 		"namespace.create",
+		"namespace.search",
 		"settings.read",
 		"settings.manage",
 	)
@@ -221,8 +242,11 @@ func (svc accessControl) Whitelist() rbac.Whitelist {
 		"delete",
 		"manage",
 		"module.create",
+		"module.search",
 		"chart.create",
+		"chart.search",
 		"page.create",
+		"page.search",
 	)
 
 	wl.Set(
@@ -234,6 +258,7 @@ func (svc accessControl) Whitelist() rbac.Whitelist {
 		"record.read",
 		"record.update",
 		"record.delete",
+		"record.search",
 	)
 
 	wl.Set(

@@ -1,0 +1,12 @@
+settings:
+  discovery.enabled: true
+  discovery.system-users.enabled: true
+  discovery.system-applications.enabled: true
+  discovery.system-roles.enabled: true
+  discovery.system-templates.enabled: true
+  discovery.automation-workflows.enabled: true
+  discovery.compose-namespaces.enabled: true
+  discovery.compose-charts.enabled: true
+  discovery.compose-pages.enabled: true
+  discovery.compose-modules.enabled: true
+  discovery.compose-records.enabled: true

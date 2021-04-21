@@ -1,11 +1,14 @@
 package types
 
 import (
-	"time"
-
+	"database/sql/driver"
+	"encoding/json"
+	discovery "github.com/cortezaproject/corteza-server/discovery/types"
 	"github.com/cortezaproject/corteza-server/pkg/filter"
 	"github.com/cortezaproject/corteza-server/pkg/rbac"
 	"github.com/jmoiron/sqlx/types"
+	"github.com/pkg/errors"
+	"time"
 )
 
 type (
@@ -23,6 +26,19 @@ type (
 		CreatedAt time.Time  `json:"createdAt,omitempty"`
 		UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 		DeletedAt *time.Time `json:"deletedAt,omitempty"`
+	}
+
+	ModuleMeta struct {
+		Discovery struct {
+			// Index access restrictions for module and it's sub-resources
+			IndexAccessRestrictions struct {
+				// Can modules in this namespace be indexed
+				Module discovery.Access `json:"module"`
+
+				// Can records in this namespace be indexed
+				Records discovery.Access `json:"records"`
+			} `json:"indexAccessRestrictions"`
+		}
 	}
 
 	ModuleFilter struct {
@@ -73,4 +89,23 @@ func (set ModuleSet) FindByHandle(handle string) *Module {
 	}
 
 	return nil
+}
+
+func (nm *ModuleMeta) Scan(value interface{}) error {
+	//lint:ignore S1034 This typecast is intentional, we need to get []byte out of a []uint8
+	switch value.(type) {
+	case nil:
+		*nm = ModuleMeta{}
+	case []uint8:
+		b := value.([]byte)
+		if err := json.Unmarshal(b, nm); err != nil {
+			return errors.Wrapf(err, "cannot scan '%v' into ModuleMeta", string(b))
+		}
+	}
+
+	return nil
+}
+
+func (nm ModuleMeta) Value() (driver.Value, error) {
+	return json.Marshal(nm)
 }

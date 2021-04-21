@@ -12,6 +12,10 @@ func (s Store) convertComposeNamespaceFilter(f types.NamespaceFilter) (query squ
 
 	query = filter.StateCondition(query, "cns.deleted_at", f.Deleted)
 
+	if len(f.NamespaceID) > 0 {
+		query = query.Where(squirrel.Eq{"cns.id": f.NamespaceID})
+	}
+
 	if len(f.LabeledIDs) > 0 {
 		query = query.Where(squirrel.Eq{"cns.id": f.LabeledIDs})
 	}

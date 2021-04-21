@@ -1,0 +1,4 @@
+roles:
+  indexer_private:   { name: Indexer of private data }
+  indexer_protected: { name: Indexer of protected data }
+  indexer_public:    { name: Indexer of public data }

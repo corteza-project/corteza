@@ -32,6 +32,7 @@ type (
 		Grant(ctx context.Context, wl Whitelist, rules ...*Rule) (err error)
 		Watch(ctx context.Context)
 		FindRulesByRoleID(roleID uint64) (rr RuleSet)
+		SignificantRoles(res Resource, op Operation) (aRR, dRR []uint64)
 		Rules() (rr RuleSet)
 		Reload(ctx context.Context)
 	}
@@ -206,6 +207,16 @@ func (svc *service) Reload(ctx context.Context) {
 	if err == nil {
 		svc.rules = rr
 	}
+}
+
+// SignificantRoles returns two list of significant roles.
+//
+// See sigRoles on rules for more details
+func (svc *service) SignificantRoles(res Resource, op Operation) (aRR, dRR []uint64) {
+	svc.l.Lock()
+	defer svc.l.Unlock()
+
+	return svc.rules.sigRoles(res, op)
 }
 
 func (svc service) flush(ctx context.Context) (err error) {

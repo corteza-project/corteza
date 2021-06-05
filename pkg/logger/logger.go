@@ -4,9 +4,6 @@ import (
 	"os"
 	"time"
 
-	// Make sure we read the ENV from .env
-	_ "github.com/joho/godotenv/autoload"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 

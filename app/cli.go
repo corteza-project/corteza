@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 
 	authCommands "github.com/cortezaproject/corteza-server/auth/commands"
 	federationCommands "github.com/cortezaproject/corteza-server/federation/commands"
@@ -14,9 +15,27 @@ import (
 // CLI function initializes basic Corteza subsystems
 // and sets-up the command line interface
 func (app *CortezaApp) InitCLI() {
-	ctx := cli.Context()
+	var (
+		ctx = cli.Context()
 
-	app.Command = cli.RootCommand(nil)
+		// path to all environmental files (or locations with .env file)
+		// filled from flag values
+		envs = []string{"."}
+	)
+
+	app.Command = cli.RootCommand(func() error {
+		if err := cli.LoadEnv(envs...); err != nil {
+			return fmt.Errorf("failed to load environmental variables: %w", err)
+		}
+
+		return nil
+	})
+
+	app.Command.Flags().StringSliceVar(&envs, "env-file", nil,
+		"Load environmental variables from files and directories containing .env file.\n"+
+			"Values from loaded files DO NOT override existing variables from the environment.\n"+
+			"This flag can be used multiple times, values are loaded from all provided locations.\n"+
+			"If no paths are provided, corteza loads .env file from the current directory (equivalent to --env-file .)")
 
 	serveCmd := cli.ServeCommand(func() (err error) {
 		if err = app.Activate(ctx); err != nil {
@@ -62,6 +81,7 @@ func (app *CortezaApp) InitCLI() {
 		provisionCmd,
 		authCommands.General(app, app.Opt.Auth),
 		federationCommands.Sync(app),
+		cli.EnvCommand(),
 		cli.VersionCommand(),
 	)
 

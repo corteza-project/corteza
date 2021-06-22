@@ -75,6 +75,7 @@ var (
 	DefaultAttachment  AttachmentService
 	DefaultRenderer    TemplateService
 	DefaultQueue       *queue
+	DefaultRoute       *route
 
 	DefaultStatistics *statistics
 
@@ -168,6 +169,7 @@ func Initialize(ctx context.Context, log *zap.Logger, s store.Storer, ws websock
 	DefaultStatistics = Statistics()
 	DefaultAttachment = Attachment(DefaultObjectStore)
 	DefaultQueue = Queue()
+	DefaultRoute = Route()
 
 	if err = initRoles(ctx, log.Named("rbac.roles"), c.RBAC, eventbus.Service(), rbac.Global()); err != nil {
 		return err

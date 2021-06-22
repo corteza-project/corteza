@@ -1,0 +1,94 @@
+# List of loggable service actions
+
+resource: system:route
+service: route
+
+# Default sensitivity for actions
+defaultActionSeverity: notice
+
+# default severity for errors
+defaultErrorSeverity: error
+
+import:
+  - github.com/cortezaproject/corteza-server/system/types
+
+props:
+  - name: route
+    type: "*types.Route"
+    fields: [ endpoint, ID ]
+  - name: new
+    type: "*types.Route"
+    fields: [ endpoint, ID ]
+  - name: update
+    type: "*types.Route"
+    fields: [ endpoint, ID ]
+  - name: search
+    type: "*types.RouteFilter"
+    fields: []
+
+actions:
+  - action: search
+    log: "searched for route"
+    severity: info
+
+  - action: lookup
+    log: "looked-up for a {route}"
+    severity: info
+
+  - action: create
+    log: "created {route}"
+
+  - action: update
+    log: "updated {route}"
+
+  - action: delete
+    log: "deleted {route}"
+
+  - action: undelete
+    log: "undeleted {route}"
+
+errors:
+  - error: notFound
+    message: "route not found"
+    severity: warning
+
+  - error: invalidID
+    message: "invalid ID"
+    severity: warning
+
+  - error: invalidEndpoint
+    message: "invalid endpoint"
+    severity: warning
+
+  - error: existsEndpoint
+    message: "route with this endpoint already exists"
+    severity: warning
+
+  - error: alreadyExists
+    message: "route by that endpoint already exists"
+    severity: warning
+
+  - error: notAllowedToCreate
+    message: "not allowed to create a route"
+    log: "failed to create a route; insufficient permissions"
+
+  - error: notAllowedToRead
+    message: "not allowed to read this route"
+    log: "failed to read {route.endpoint}; insufficient permissions"
+
+  - error: notAllowedToUpdate
+    message: "not allowed to update this route"
+    log: "failed to update {route.endpoint}; insufficient permissions"
+
+  - error: notAllowedToDelete
+    message: "not allowed to delete this route"
+    log: "failed to delete {route.endpoint}; insufficient permissions"
+
+  - error: notAllowedToUndelete
+    message: "not allowed to undelete this route"
+    log: "failed to undelete {route.endpoint}; insufficient permissions"
+
+  - error: notAllowedToExec
+    message: "not allowed to execute this route"
+    log: "failed to exec {route.endpoint}; insufficient permissions"
+

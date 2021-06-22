@@ -1,0 +1,43 @@
+import:
+  - github.com/cortezaproject/corteza-server/system/types
+
+types:
+  package: types
+  type: types.Route
+  filterType: types.RouteFilter
+
+fields:
+  - { field: ID,        sortable: false }
+  - { field: Endpoint }
+  - { field: Method }
+  - { field: Debug }
+  - { field: Enabled }
+  - { field: Group }
+  - { field: CreatedBy }
+  - { field: UpdatedBy }
+  - { field: DeletedBy }
+  - { field: CreatedAt }
+  - { field: UpdatedAt }
+  - { field: DeletedAt }
+
+lookups:
+  - fields: [ ID ]
+    description: |-
+      searches for route by ID
+  - fields: [ Endpoint ]
+    description: |-
+      searches for route by endpoint
+
+rdbms:
+  alias: ar
+  table: apigw_routes
+  customFilterConverter: true
+  mapFields:
+    Group: { column: rel_group }
+
+search:
+  enablePaging: true
+  enableFilterCheckFunction: false
+
+upsert:
+  enable: false

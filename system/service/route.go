@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/cortezaproject/corteza-server/pkg/actionlog"
-	"github.com/cortezaproject/corteza-server/pkg/apigw"
 	a "github.com/cortezaproject/corteza-server/pkg/auth"
 	"github.com/cortezaproject/corteza-server/store"
 	"github.com/cortezaproject/corteza-server/system/types"
@@ -80,9 +79,9 @@ func (svc *route) Create(ctx context.Context, new *types.Route) (q *types.Route,
 		q = new
 
 		// send the signal to reload all routes
-		if new.Enabled {
-			apigw.Service().Reload(ctx)
-		}
+		// if new.Enabled {
+		// 	apigw.Service().Reload(ctx)
+		// }
 
 		return nil
 	}()
@@ -106,9 +105,10 @@ func (svc *route) Update(ctx context.Context, upd *types.Route) (q *types.Route,
 			return RouteErrNotFound(qProps)
 		}
 
-		if qq, e = store.LookupApigwRouteByEndpoint(ctx, svc.store, upd.Endpoint); e == nil && qq != nil {
-			return RouteErrExistsEndpoint(qProps)
-		}
+		// temp todo - update itself with the same endpoint
+		// if qq, e = store.LookupApigwRouteByEndpoint(ctx, svc.store, upd.Endpoint); e == nil && qq == nil {
+		// 	return RouteErrExistsEndpoint(qProps)
+		// }
 
 		// Set new values after beforeCreate events are emitted
 		upd.UpdatedAt = now()
@@ -122,7 +122,7 @@ func (svc *route) Update(ctx context.Context, upd *types.Route) (q *types.Route,
 		q = upd
 
 		// send the signal to reload all route
-		apigw.Service().Reload(ctx)
+		// apigw.Service().Reload(ctx)
 
 		return nil
 	}()
@@ -159,7 +159,7 @@ func (svc *route) DeleteByID(ctx context.Context, ID uint64) (err error) {
 		}
 
 		// send the signal to reload all queues
-		apigw.Service().Reload(ctx)
+		// apigw.Service().Reload(ctx)
 
 		return nil
 	}()
@@ -196,7 +196,7 @@ func (svc *route) UndeleteByID(ctx context.Context, ID uint64) (err error) {
 		}
 
 		// send the signal to reload all queues
-		apigw.Service().Reload(ctx)
+		// apigw.Service().Reload(ctx)
 
 		return nil
 	}()

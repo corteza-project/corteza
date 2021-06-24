@@ -633,6 +633,11 @@ func makeWorkflowHandler(ac workflowExecController, s *session, t *types.Trigger
 			scope   = wf.Scope.Merge(t.Input)
 			evScope *expr.Vars
 			wait    WaitFn
+
+			// This needs to happen!%&!/("#")
+			// The returned closure needs to have it's own instance so it doesn't
+			// affect the instance bound to the workflow handler
+			runAs = runAs
 		)
 
 		if enc, is := ev.(varsEncoder); is {

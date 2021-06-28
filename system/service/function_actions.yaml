@@ -1,0 +1,61 @@
+# List of loggable service actions
+
+resource: system:function
+service: function
+
+# Default sensitivity for actions
+defaultActionSeverity: notice
+
+# default severity for errors
+defaultErrorSeverity: error
+
+import:
+  - github.com/cortezaproject/corteza-server/system/types
+
+props:
+  - name: function
+    type: "*types.Function"
+    fields: [ ID, ref ]
+  # - name: new
+  #   type: "*types.Route"
+  #   fields: [ endpoint, ID ]
+  # - name: update
+  #   type: "*types.Route"
+  #   fields: [ endpoint, ID ]
+  - name: search
+    type: "*types.FunctionFilter"
+    fields: []
+
+actions:
+  - action: search
+    log: "searched for function"
+    severity: info
+
+  - action: lookup
+    log: "looked-up for a {function}"
+    severity: info
+
+  - action: create
+    log: "created {function}"
+
+  - action: update
+    log: "updated {function}"
+
+  - action: delete
+    log: "deleted {function}"
+
+  - action: undelete
+    log: "undeleted {function}"
+
+errors:
+  - error: notFound
+    message: "function not found"
+    severity: warning
+
+  - error: invalidID
+    message: "invalid ID"
+    severity: warning
+
+  - error: invalidRoute
+    message: "invalid route"
+    severity: warning

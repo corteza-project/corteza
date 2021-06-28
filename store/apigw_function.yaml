@@ -1,0 +1,44 @@
+import:
+  - github.com/cortezaproject/corteza-server/system/types
+
+types:
+  package: types
+  type: types.Function
+  filterType: types.FunctionFilter
+
+fields:
+  - { field: ID,        sortable: false }
+  - { field: Route }
+  - { field: Weight }
+  - { field: Kind }
+  - { field: Ref }
+  # - { field: Arguments, type: "expr.Vars" }
+  - { field: Params, type: "map[string]interface{}" }
+  - { field: CreatedBy }
+  - { field: UpdatedBy }
+  - { field: DeletedBy }
+  - { field: CreatedAt }
+  - { field: UpdatedAt }
+  - { field: DeletedAt }
+
+lookups:
+  - fields: [ ID ]
+    description: |-
+      searches for function by ID
+  - fields: [ Route ]
+    description: |-
+      searches for function by route
+
+rdbms:
+  alias: af
+  table: apigw_functions
+  customFilterConverter: true
+  mapFields:
+    Route: { column: rel_route }
+
+search:
+  enablePaging: true
+  enableFilterCheckFunction: false
+
+upsert:
+  enable: false

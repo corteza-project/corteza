@@ -48,12 +48,12 @@ type (
 		// Deleted GET parameter
 		//
 		// Exclude (0, default), include (1) or return only (2) deleted routes
-		Deleted uint
+		Deleted uint64 `json:",string"`
 
 		// Disabled GET parameter
 		//
 		// Exclude (0, default), include (1) or return only (2) disabled routes
-		Disabled uint
+		Disabled uint64 `json:",string"`
 
 		// Labels GET parameter
 		//
@@ -100,7 +100,7 @@ type (
 		// Group POST parameter
 		//
 		// Route group
-		Group int
+		Group uint64 `json:",string"`
 	}
 
 	RouteUpdate struct {
@@ -132,7 +132,7 @@ type (
 		// Group POST parameter
 		//
 		// Route group
-		Group int
+		Group uint64 `json:",string"`
 	}
 
 	RouteRead struct {
@@ -187,12 +187,12 @@ func (r RouteList) GetQuery() string {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetDeleted() uint {
+func (r RouteList) GetDeleted() uint64 {
 	return r.Deleted
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetDisabled() uint {
+func (r RouteList) GetDisabled() uint64 {
 	return r.Disabled
 }
 
@@ -241,13 +241,13 @@ func (r *RouteList) Fill(req *http.Request) (err error) {
 			}
 		}
 		if val, ok := tmp["deleted"]; ok && len(val) > 0 {
-			r.Deleted, err = payload.ParseUint(val[0]), nil
+			r.Deleted, err = payload.ParseUint64(val[0]), nil
 			if err != nil {
 				return err
 			}
 		}
 		if val, ok := tmp["disabled"]; ok && len(val) > 0 {
-			r.Disabled, err = payload.ParseUint(val[0]), nil
+			r.Disabled, err = payload.ParseUint64(val[0]), nil
 			if err != nil {
 				return err
 			}
@@ -323,7 +323,7 @@ func (r RouteCreate) GetEnabled() bool {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteCreate) GetGroup() int {
+func (r RouteCreate) GetGroup() uint64 {
 	return r.Group
 }
 
@@ -377,7 +377,7 @@ func (r *RouteCreate) Fill(req *http.Request) (err error) {
 		}
 
 		if val, ok := req.Form["group"]; ok && len(val) > 0 {
-			r.Group, err = payload.ParseInt(val[0]), nil
+			r.Group, err = payload.ParseUint64(val[0]), nil
 			if err != nil {
 				return err
 			}
@@ -430,7 +430,7 @@ func (r RouteUpdate) GetEnabled() bool {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) GetGroup() int {
+func (r RouteUpdate) GetGroup() uint64 {
 	return r.Group
 }
 
@@ -484,7 +484,7 @@ func (r *RouteUpdate) Fill(req *http.Request) (err error) {
 		}
 
 		if val, ok := req.Form["group"]; ok && len(val) > 0 {
-			r.Group, err = payload.ParseInt(val[0]), nil
+			r.Group, err = payload.ParseUint64(val[0]), nil
 			if err != nil {
 				return err
 			}

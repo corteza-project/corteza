@@ -22,3 +22,4 @@ types:
   Template:
     labelResourceType: template
   Route: {}
+  Function: {}

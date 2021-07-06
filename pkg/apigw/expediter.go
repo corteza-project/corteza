@@ -2,51 +2,56 @@ package apigw
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 
-	"github.com/cortezaproject/corteza-server/pkg/expr"
-	"github.com/cortezaproject/corteza-server/pkg/wfexec"
+	"github.com/cortezaproject/corteza-server/system/types"
 	"github.com/davecgh/go-spew/spew"
 )
 
 type (
-	redirectExpediterArgs struct {
-		Location string
+	expediterRedirection struct{}
+
+	errorHandler struct {
+		name   string
+		args   []string
+		weight int
+		step   int
 	}
 )
 
-func redirectExpediter(c context.Context, params *expr.Vars) wfHandler {
-	var (
-		clv = redirectExpediterArgs{}
-	)
-
-	return func(c context.Context, er *wfexec.ExecRequest) (r wfexec.ExecResponse, err error) {
-		params.Decode(&clv)
-		spew.Dump("redirect expediter fn()", clv)
-		e := er.Scope.GetValue()["envelope"]
-		ee := e.Get().(envelope)
-
-		http.Redirect(ee.Writer, ee.Request, clv.Location, http.StatusTemporaryRedirect)
-
-		r = &expr.Vars{}
-		return
+func (h expediterRedirection) Meta(f *types.Function) functionMeta {
+	return functionMeta{
+		step:   3,
+		name:   "expediterRedirection",
+		label:  "Redirection expediter",
+		kind:   "expediter",
+		weight: int(f.Weight),
+		params: f.Params,
 	}
 }
 
-func expediterErrorFn(c context.Context, er *wfexec.ExecRequest) (r wfexec.ExecResponse, err error) {
-	// spew.Dump("expediter error fn()", er)
+func (h expediterRedirection) Handler() handlerFunc {
+	return func(ctx context.Context, scope *scp, params map[string]interface{}, ff functionHandler) error {
+		scope.writer.Header().Add(fmt.Sprintf("step_%d", ff.step), ff.name)
+		http.Redirect(scope.writer, scope.req, params["location"].(string), http.StatusFound)
 
-	e := er.Scope.GetValue()["error"]
-	values := er.Scope.GetValue()["writer"]
+		return nil
+	}
+}
 
-	writer := values.Get()
-	eValue := e.Get()
+func (pp errorHandler) Exec(ctx context.Context, scope *scp, err error) {
+	type (
+		responseHelper struct {
+			Msg string `json:"msg"`
+		}
+	)
 
-	fmt.Fprintf(writer.(*httptest.ResponseRecorder), fmt.Sprintf(`{"msg": "%s"}`, eValue))
-	writer.(*httptest.ResponseRecorder).Code = http.StatusBadGateway
+	resp := responseHelper{
+		Msg: err.Error(),
+	}
+	spew.Dump("ERR in expediter", err, resp)
 
-	r = &expr.Vars{}
-	return
+	json.NewEncoder(scope.writer).Encode(resp)
 }

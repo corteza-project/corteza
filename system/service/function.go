@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cortezaproject/corteza-server/pkg/actionlog"
+	"github.com/cortezaproject/corteza-server/pkg/apigw"
 	a "github.com/cortezaproject/corteza-server/pkg/auth"
 	"github.com/cortezaproject/corteza-server/store"
 	"github.com/cortezaproject/corteza-server/system/types"
@@ -220,4 +221,9 @@ func (svc *function) Search(ctx context.Context, filter types.FunctionFilter) (r
 	}()
 
 	return r, f, svc.recordAction(ctx, aProps, FunctionActionSearch, err)
+}
+
+func (svc *function) Definitions(ctx context.Context, kind string) (interface{}, error) {
+	// get the definitions from registry
+	return apigw.Service().Funcs(kind), nil
 }

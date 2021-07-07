@@ -32,6 +32,7 @@ type (
 		Update(ctx context.Context, upd *types.Function) (*types.Function, error)
 		DeleteByID(ctx context.Context, ID uint64) error
 		UndeleteByID(ctx context.Context, ID uint64) error
+		Definitions(context.Context, string) (interface{}, error)
 	}
 )
 
@@ -104,6 +105,10 @@ func (ctrl *Function) Update(ctx context.Context, r *request.FunctionUpdate) (in
 
 func (ctrl *Function) Delete(ctx context.Context, r *request.FunctionDelete) (interface{}, error) {
 	return api.OK(), ctrl.svc.DeleteByID(ctx, r.FunctionID)
+}
+
+func (ctrl *Function) Definitions(ctx context.Context, r *request.FunctionDefinitions) (interface{}, error) {
+	return ctrl.svc.Definitions(ctx, r.Kind)
 }
 
 func (ctrl *Function) Undelete(ctx context.Context, r *request.FunctionUndelete) (interface{}, error) {

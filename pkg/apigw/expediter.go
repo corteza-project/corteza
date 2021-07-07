@@ -23,12 +23,12 @@ type (
 
 func (h expediterRedirection) Meta(f *types.Function) functionMeta {
 	return functionMeta{
-		step:   3,
-		name:   "expediterRedirection",
-		label:  "Redirection expediter",
-		kind:   "expediter",
-		weight: int(f.Weight),
-		params: f.Params,
+		Step:   3,
+		Name:   "expediterRedirection",
+		Label:  "Redirection expediter",
+		Kind:   "expediter",
+		Weight: int(f.Weight),
+		Params: f.Params,
 	}
 }
 

@@ -16,23 +16,37 @@ type (
 
 func (h verifierQueryParam) Meta(f *types.Function) functionMeta {
 	return functionMeta{
-		step:   0,
-		name:   "verifierQueryParam",
-		label:  "Query parameters verifier",
-		kind:   "verifier",
-		weight: int(f.Weight),
-		params: f.Params,
+		Step:   0,
+		Name:   "verifierQueryParam",
+		Label:  "Query parameters verifier",
+		Kind:   "verifier",
+		Weight: int(f.Weight),
+		Params: f.Params,
+		Args: []*functionMetaArg{
+			{
+				Type:    "expr",
+				Label:   "expr",
+				Options: map[string]interface{}{},
+			},
+		},
 	}
 }
 
 func (h verifierOrigin) Meta(f *types.Function) functionMeta {
 	return functionMeta{
-		step:   0,
-		name:   "verifierOrigin",
-		label:  "Origin verifier",
-		kind:   "verifier",
-		weight: int(f.Weight),
-		params: f.Params,
+		Step:   0,
+		Name:   "verifierOrigin",
+		Label:  "Origin verifier",
+		Kind:   "verifier",
+		Weight: int(f.Weight),
+		Params: f.Params,
+		Args: []*functionMetaArg{
+			{
+				Type:    "expr",
+				Label:   "expr",
+				Options: map[string]interface{}{},
+			},
+		},
 	}
 }
 

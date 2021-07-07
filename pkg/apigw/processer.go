@@ -19,18 +19,26 @@ type (
 
 func (h processerWorkflow) Meta(f *types.Function) functionMeta {
 	return functionMeta{
-		step:   2,
-		name:   "expediterRedirection",
-		label:  "Redirection expediter",
-		kind:   "expediter",
-		weight: int(f.Weight),
-		params: f.Params,
+		Step:   2,
+		Name:   "processerWorkflow",
+		Label:  "Workflow processer",
+		Kind:   "processer",
+		Weight: int(f.Weight),
+		Params: f.Params,
+		Args: []*functionMetaArg{
+			{
+				Type:    "workflow",
+				Label:   "workflow",
+				Options: map[string]interface{}{},
+			},
+		},
 	}
 }
 
 func (h processerWorkflow) Handler() handlerFunc {
 	return func(ctx context.Context, scope *scp, params map[string]interface{}, ff functionHandler) error {
 		// h.d.Dispatch(c, event.ApiOnProcess(&envlp))
+
 		return nil
 	}
 }

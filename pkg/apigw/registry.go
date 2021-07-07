@@ -2,6 +2,8 @@ package apigw
 
 import (
 	"fmt"
+
+	"github.com/cortezaproject/corteza-server/system/types"
 )
 
 type (
@@ -33,8 +35,13 @@ func (r *registry) Get(identifier string) (Handler, error) {
 	return f, nil
 }
 
-func (r *registry) All() map[string]Handler {
-	return r.h
+func (r *registry) All() (list functionMetaList) {
+	for _, handler := range r.h {
+		m := handler.Meta(&types.Function{})
+		list = append(list, &m)
+	}
+
+	return
 }
 
 func (r *registry) Preload() {

@@ -7,6 +7,8 @@ import (
 )
 
 type (
+	functionMetaList []*functionMeta
+
 	Handler interface {
 		Handler() handlerFunc
 		Meta(f *types.Function) functionMeta
@@ -15,12 +17,20 @@ type (
 	handlerFunc func(context.Context, *scp, map[string]interface{}, functionHandler) error
 
 	functionMeta struct {
-		step   int
-		weight int
-		name   string
-		label  string
-		kind   string
-		params map[string]interface{}
+		Step   int                    `json:"step"`
+		Weight int                    `json:"-"`
+		Name   string                 `json:"name"`
+		Label  string                 `json:"label"`
+		Kind   string                 `json:"kind"`
+		Params map[string]interface{} `json:"-"`
+		Args   []*functionMetaArg     `json:"params,omitempty"`
+	}
+
+	functionMetaArg struct {
+		Label   string                 `json:"label"`
+		Type    string                 `json:"type"`
+		Example string                 `json:"example"`
+		Options map[string]interface{} `json:"options"`
 	}
 
 	functionHandler struct {
@@ -43,16 +53,30 @@ func (ff *functionHandler) SetHandler(h handlerFunc) {
 }
 
 func (ff *functionHandler) Merge(ctx context.Context, p functionMeta) {
-	ff.step = p.step
-	ff.kind = p.kind
-	ff.label = p.label
-	ff.name = p.name
-	ff.weight = p.weight
-	ff.params = p.params
+	ff.step = p.Step
+	ff.kind = p.Kind
+	ff.label = p.Label
+	ff.name = p.Name
+	ff.weight = p.Weight
+	ff.params = p.Params
 }
 
 func (ff functionHandler) Weight() int {
 	// if there's gonna be more than 1000 funcs
 	// per step, we're doing something wrong
 	return ff.step*1000 + ff.weight
+}
+
+func (fm functionMetaList) Filter(f func(*functionMeta) (bool, error)) (out functionMetaList, err error) {
+	var ok bool
+	out = functionMetaList{}
+	for i := range fm {
+		if ok, err = f(fm[i]); err != nil {
+			return
+		} else if ok {
+			out = append(out, fm[i])
+		}
+	}
+
+	return
 }

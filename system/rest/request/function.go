@@ -155,6 +155,13 @@ type (
 		// Function ID
 		FunctionID uint64 `json:",string"`
 	}
+
+	FunctionDefinitions struct {
+		// Kind GET parameter
+		//
+		// Filter functions by kind
+		Kind string
+	}
 )
 
 // NewFunctionList request
@@ -611,6 +618,41 @@ func (r *FunctionUndelete) Fill(req *http.Request) (err error) {
 			return err
 		}
 
+	}
+
+	return err
+}
+
+// NewFunctionDefinitions request
+func NewFunctionDefinitions() *FunctionDefinitions {
+	return &FunctionDefinitions{}
+}
+
+// Auditable returns all auditable/loggable parameters
+func (r FunctionDefinitions) Auditable() map[string]interface{} {
+	return map[string]interface{}{
+		"kind": r.Kind,
+	}
+}
+
+// Auditable returns all auditable/loggable parameters
+func (r FunctionDefinitions) GetKind() string {
+	return r.Kind
+}
+
+// Fill processes request and fills internal variables
+func (r *FunctionDefinitions) Fill(req *http.Request) (err error) {
+
+	{
+		// GET params
+		tmp := req.URL.Query()
+
+		if val, ok := tmp["kind"]; ok && len(val) > 0 {
+			r.Kind, err = val[0], nil
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	return err

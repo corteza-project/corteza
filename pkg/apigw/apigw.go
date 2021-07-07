@@ -173,3 +173,16 @@ func (s *apigw) Init(ctx context.Context, route ...*route) {
 		}
 	}
 }
+
+func (s *apigw) Funcs(kind string) (list functionMetaList) {
+	list = s.reg.All()
+
+	if kind != "" {
+		list, _ = list.Filter(func(fm *functionMeta) (bool, error) {
+			// return fm.
+			return fm.Kind == kind, nil
+		})
+	}
+
+	return
+}

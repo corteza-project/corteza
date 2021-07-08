@@ -1,0 +1,11 @@
+imports:
+  - time
+
+docs:
+  title: Seeder
+  description: A seeder is the initial seeding of a database with fake data.
+
+props:
+  - name: LogEnabled
+    type: bool
+    description: Enable extra logging // fixme add some more description

@@ -16,7 +16,6 @@ import (
 	"github.com/cortezaproject/corteza-server/pkg/actionlog"
 	"github.com/cortezaproject/corteza-server/pkg/api/server"
 	"github.com/cortezaproject/corteza-server/pkg/apigw"
-	"github.com/cortezaproject/corteza-server/pkg/eventbus"
 	"github.com/cortezaproject/corteza-server/pkg/logger"
 	"github.com/cortezaproject/corteza-server/pkg/options"
 	"github.com/cortezaproject/corteza-server/pkg/webapp"
@@ -109,7 +108,7 @@ func (app *CortezaApp) mountHttpRoutes(r chi.Router) {
 
 			// temp api gateway support
 			{
-				apigw.Setup(struct{}{}, app.Log, eventbus.Service(), service.DefaultStore)
+				apigw.Setup(struct{}{}, app.Log, service.DefaultStore)
 				r.Route("/gateway", apigw.Service().Router(context.Background()))
 			}
 

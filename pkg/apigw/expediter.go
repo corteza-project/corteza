@@ -21,6 +21,10 @@ type (
 	}
 )
 
+func NewExpediterRedirection() expediterRedirection {
+	return expediterRedirection{}
+}
+
 func (h expediterRedirection) Meta(f *types.Function) functionMeta {
 	return functionMeta{
 		Step:   3,
@@ -34,8 +38,8 @@ func (h expediterRedirection) Meta(f *types.Function) functionMeta {
 
 func (h expediterRedirection) Handler() handlerFunc {
 	return func(ctx context.Context, scope *scp, params map[string]interface{}, ff functionHandler) error {
-		scope.writer.Header().Add(fmt.Sprintf("step_%d", ff.step), ff.name)
-		http.Redirect(scope.writer, scope.req, params["location"].(string), http.StatusFound)
+		scope.Writer().Header().Add(fmt.Sprintf("step_%d", ff.step), ff.name)
+		http.Redirect(scope.Writer(), scope.Request(), params["location"].(string), http.StatusFound)
 
 		return nil
 	}
@@ -53,5 +57,5 @@ func (pp errorHandler) Exec(ctx context.Context, scope *scp, err error) {
 	}
 	spew.Dump("ERR in expediter", err, resp)
 
-	json.NewEncoder(scope.writer).Encode(resp)
+	json.NewEncoder(scope.Writer()).Encode(resp)
 }

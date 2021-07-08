@@ -2,20 +2,28 @@ package apigw
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/cortezaproject/corteza-server/pkg/eventbus"
+	atypes "github.com/cortezaproject/corteza-server/automation/types"
+	"github.com/cortezaproject/corteza-server/pkg/expr"
 	"github.com/cortezaproject/corteza-server/system/types"
 )
 
 type (
-	dispatcher interface {
-		Dispatch(ctx context.Context, ev eventbus.Event)
+	WfExecer interface {
+		Exec(ctx context.Context, workflowID uint64, p atypes.WorkflowExecParams) (*expr.Vars, atypes.Stacktrace, error)
 	}
 
 	processerWorkflow struct {
-		d dispatcher
+		d WfExecer
 	}
 )
+
+func NewProcesserWorkflow(wf WfExecer) processerWorkflow {
+	return processerWorkflow{
+		d: wf,
+	}
+}
 
 func (h processerWorkflow) Meta(f *types.Function) functionMeta {
 	return functionMeta{
@@ -37,54 +45,63 @@ func (h processerWorkflow) Meta(f *types.Function) functionMeta {
 
 func (h processerWorkflow) Handler() handlerFunc {
 	return func(ctx context.Context, scope *scp, params map[string]interface{}, ff functionHandler) error {
-		// h.d.Dispatch(c, event.ApiOnProcess(&envlp))
+		var (
+			wfID int64
+			ok   bool
+			err  error
+		)
 
-		return nil
+		// validate workflow param
+		if _, ok = params["workflow"]; !ok {
+			return fmt.Errorf("invalid param workflow")
+		}
+
+		wfID, err = expr.CastToInteger(params["workflow"])
+
+		if err != nil {
+			return err
+		}
+
+		// setup scope for workflow
+		vv := map[string]interface{}{
+			"request": scope.Request(),
+		}
+
+		// get the request data and put it into vars
+		in, err := expr.NewVars(vv)
+
+		if err != nil {
+			return err
+		}
+
+		wp := atypes.WorkflowExecParams{
+			Trace: false,
+			// todo depending on settings per-route
+			Async: false,
+			// todo depending on settings per-route
+			Wait:  true,
+			Input: in,
+		}
+
+		out, _, err := h.d.Exec(ctx, uint64(wfID), wp)
+
+		if err != nil {
+			return err
+		}
+
+		// merge out with scope
+		merged, err := in.Merge(out)
+
+		if err != nil {
+			return err
+		}
+
+		mm, err := expr.CastToVars(merged)
+
+		for k, v := range mm {
+			scope.Set(k, v)
+		}
+
+		return err
 	}
 }
-
-// func formDataProcesserFn(c context.Context, er *wfexec.ExecRequest) (r wfexec.ExecResponse, err error) {
-// 	type (
-// 		formDataProcesserResponse struct {
-// 			Name string `json:"name"`
-// 		}
-// 	)
-
-// 	spew.Dump("step processer fn()")
-
-// 	e := er.Scope.GetValue()["envelope"]
-// 	ee := e.Get()
-
-// 	// ee.(envelope).Writer.WriteHeader(int(id))
-// 	ee.(envelope).Writer.Write([]byte(`{"test":"foobar"}`))
-
-// 	e.Assign(ee)
-
-// 	// req := values.Get()
-// 	// ww := wr.Get()
-// 	// writer := ww.(http.ResponseWriter)
-
-// 	// formValue := req.(*http.Request).PostFormValue("name")
-
-// 	// resp := formDataProcesserResponse{
-// 	// 	// Name: fmt.Sprintf("AA %s AA", formValue),
-// 	// 	Name: "formValue",
-// 	// }
-
-// 	// encoder := json.NewEncoder(writer)
-// 	// encoder.Encode(resp)
-
-// 	// writer.(*httptest.ResponseRecorder).Header()["Content-Type"] = []string{"application/json"}
-// 	// writer.Header().Set("Content-Type", "application/json3")
-
-// 	// spew.Dump(writer.(*httptest.ResponseRecorder).Header())
-// 	// a, b := expr.NewKV(writer)
-// 	// spew.Dump("Aaaaaaaaaaa", a)
-
-// 	vv := &expr.Vars{}
-// 	// vv.Set("writer", writer)
-
-// 	r = vv
-
-// 	return
-// }

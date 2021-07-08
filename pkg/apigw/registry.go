@@ -3,6 +3,9 @@ package apigw
 import (
 	"fmt"
 
+	"github.com/cortezaproject/corteza-server/automation/service"
+	as "github.com/cortezaproject/corteza-server/automation/service"
+	"github.com/cortezaproject/corteza-server/pkg/options"
 	"github.com/cortezaproject/corteza-server/system/types"
 )
 
@@ -45,8 +48,12 @@ func (r *registry) All() (list functionMetaList) {
 }
 
 func (r *registry) Preload() {
-	r.Add("verifierQueryParam", verifierQueryParam{})
-	r.Add("verifierOrigin", verifierOrigin{})
-	r.Add("expediterRedirection", expediterRedirection{})
-	r.Add("processerWorkflow", processerWorkflow{})
+	r.Add("verifierQueryParam", NewVerifierQueryParam())
+	r.Add("verifierOrigin", NewVerifierOrigin())
+	r.Add("expediterRedirection", NewExpediterRedirection())
+	r.Add("processerWorkflow", NewProcesserWorkflow(NewWorkflow()))
+}
+
+func NewWorkflow() WfExecer {
+	return as.Workflow(service.DefaultLogger, options.CorredorOpt{})
 }

@@ -18,11 +18,11 @@ type (
 func (r route) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	var (
 		ctx   = context.Background()
-		scope = scp{
-			req:    req,
-			writer: w,
-		}
+		scope = scp{}
 	)
+
+	scope["request"] = req
+	scope["writer"] = w
 
 	err := r.pipe.Exec(ctx, &scope)
 

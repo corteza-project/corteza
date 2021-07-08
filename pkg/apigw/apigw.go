@@ -15,12 +15,11 @@ type (
 	}
 
 	apigw struct {
-		log        *zap.Logger
-		reg        *registry
-		routes     []*route
-		dispatcher dispatcher
-		storer     storer
-		reload     chan bool
+		log    *zap.Logger
+		reg    *registry
+		routes []*route
+		storer storer
+		reload chan bool
 	}
 )
 
@@ -38,24 +37,23 @@ func Set(a *apigw) {
 }
 
 // Setup handles the singleton service
-func Setup(opts interface{}, log *zap.Logger, dispatcher dispatcher, storer storer) {
+func Setup(opts interface{}, log *zap.Logger, storer storer) {
 	if apiGw != nil {
 		return
 	}
 
-	apiGw = New(opts, log, dispatcher, storer)
+	apiGw = New(opts, log, storer)
 }
 
-func New(opts interface{}, logger *zap.Logger, dispatcher dispatcher, storer storer) *apigw {
+func New(opts interface{}, logger *zap.Logger, storer storer) *apigw {
 	reg := NewRegistry()
 	reg.Preload()
 
 	return &apigw{
-		log:        logger,
-		dispatcher: dispatcher,
-		storer:     storer,
-		reload:     make(chan bool),
-		reg:        reg,
+		log:    logger,
+		storer: storer,
+		reload: make(chan bool),
+		reg:    reg,
 	}
 }
 
@@ -92,7 +90,6 @@ func (s *apigw) loadFunctions(ctx context.Context, route uint64) (ff []*types.Fu
 
 func (s *apigw) Router(ctx context.Context) func(r chi.Router) {
 	return func(r chi.Router) {
-
 		routes, err := s.loadRoutes(ctx)
 
 		if err != nil {

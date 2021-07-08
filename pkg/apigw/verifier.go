@@ -14,6 +14,14 @@ type (
 	verifierOrigin     struct{}
 )
 
+func NewVerifierOrigin() verifierOrigin {
+	return verifierOrigin{}
+}
+
+func NewVerifierQueryParam() verifierQueryParam {
+	return verifierQueryParam{}
+}
+
 func (h verifierQueryParam) Meta(f *types.Function) functionMeta {
 	return functionMeta{
 		Step:   0,
@@ -62,7 +70,7 @@ func (h verifierQueryParam) Handler() handlerFunc {
 			}
 
 			vv := map[string]interface{}{}
-			vals := scope.req.URL.Query()
+			vals := scope.Request().URL.Query()
 
 			for k, v := range vals {
 				vv[k] = v[0]
@@ -99,7 +107,7 @@ func (h verifierQueryParam) Handler() handlerFunc {
 		}
 
 		// testing
-		scope.req.Header.Add(fmt.Sprintf("step_%d", ff.step), ff.name)
+		scope.Request().Header.Add(fmt.Sprintf("step_%d", ff.step), ff.name)
 
 		return nil
 	}
@@ -116,7 +124,7 @@ func (h verifierOrigin) Handler() handlerFunc {
 			}
 
 			vv := map[string]interface{}{
-				"origin": scope.req.Header.Get("Origin"),
+				"origin": scope.Request().Header.Get("Origin"),
 			}
 
 			// get the request data and put it into vars
@@ -150,7 +158,7 @@ func (h verifierOrigin) Handler() handlerFunc {
 		}
 
 		// testing
-		scope.req.Header.Add(fmt.Sprintf("step_%d", ff.step), ff.name)
+		scope.Request().Header.Add(fmt.Sprintf("step_%d", ff.step), ff.name)
 
 		return nil
 	}

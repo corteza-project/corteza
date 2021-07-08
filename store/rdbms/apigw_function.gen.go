@@ -238,6 +238,7 @@ func (s Store) QueryApigwFunctions(
 	check func(*types.Function) (bool, error),
 ) ([]*types.Function, error) {
 	var (
+		tmp = make([]*types.Function, 0, DefaultSliceCapacity)
 		set = make([]*types.Function, 0, DefaultSliceCapacity)
 		res *types.Function
 
@@ -259,10 +260,15 @@ func (s Store) QueryApigwFunctions(
 			return nil, err
 		}
 
+		tmp = append(tmp, res)
+	}
+
+	for _, res = range tmp {
+
 		set = append(set, res)
 	}
 
-	return set, rows.Err()
+	return set, nil
 }
 
 // LookupApigwFunctionByID searches for function by ID

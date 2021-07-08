@@ -36,11 +36,28 @@ type (
 		err ErrorHandler
 	}
 
-	scp struct {
-		req    *http.Request
-		writer http.ResponseWriter
-	}
+	scp map[string]interface{}
 )
+
+func (s scp) Request() *http.Request {
+	if _, ok := s["request"]; ok {
+		return s["request"].(*http.Request)
+	}
+
+	return nil
+}
+
+func (s scp) Writer() http.ResponseWriter {
+	if _, ok := s["writer"]; ok {
+		return s["writer"].(http.ResponseWriter)
+	}
+
+	return nil
+}
+
+func (s scp) Set(k string, v interface{}) {
+	s[k] = v
+}
 
 // Exec takes care of error handling and main
 // functionality that takes place in worker

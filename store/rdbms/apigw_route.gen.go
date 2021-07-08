@@ -238,6 +238,7 @@ func (s Store) QueryApigwRoutes(
 	check func(*types.Route) (bool, error),
 ) ([]*types.Route, error) {
 	var (
+		tmp = make([]*types.Route, 0, DefaultSliceCapacity)
 		set = make([]*types.Route, 0, DefaultSliceCapacity)
 		res *types.Route
 
@@ -259,10 +260,15 @@ func (s Store) QueryApigwRoutes(
 			return nil, err
 		}
 
+		tmp = append(tmp, res)
+	}
+
+	for _, res = range tmp {
+
 		set = append(set, res)
 	}
 
-	return set, rows.Err()
+	return set, nil
 }
 
 // LookupApigwRouteByID searches for route by ID

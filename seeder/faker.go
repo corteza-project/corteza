@@ -26,8 +26,6 @@ var (
 	}
 )
 
-const ()
-
 func Faker() *faker {
 	return &faker{fakerMethods}
 }
@@ -53,7 +51,6 @@ func (f faker) fakeValueByName(name string) (val string, ok bool) {
 
 // generateValue generate value based on name or given type
 func (f faker) fakeValue(name, kind string, opt valueOptions) (val string, err error) {
-	// fixMe: lower method name
 	// Generate & return value from mapped methods
 	val, ok := f.fakeValueByName(name)
 	if ok {
@@ -77,7 +74,7 @@ func (f faker) fakeValue(name, kind string, opt valueOptions) (val string, err e
 }
 
 func (f faker) fakeUserHandle(s string) string {
-	return gofakeit.Generate("??????") + "_handle "
+	return gofakeit.Generate("??????") + "_seeded"
 }
 
 func toLowerCase(s string) string {

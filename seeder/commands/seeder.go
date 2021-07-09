@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/cortezaproject/corteza-server/compose/types"
 	"github.com/cortezaproject/corteza-server/seeder"
 	"strconv"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Faker(app serviceInitializer) *cobra.Command {
+func Seeder(app serviceInitializer) *cobra.Command {
 	// Fake data generation commands.
 	cmd := &cobra.Command{
 		Use:   "faker",
@@ -19,8 +20,8 @@ func Faker(app serviceInitializer) *cobra.Command {
 
 	// Create users
 	createUserCmd := &cobra.Command{
-		Use:   "addUser",
-		Short: "Create users",
+		Use:   "createUser",
+		Short: "Create user",
 
 		PreRunE: commandPreRunInitService(app),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -36,14 +37,14 @@ func Faker(app serviceInitializer) *cobra.Command {
 			limit, err = strconv.Atoi(limitFlag)
 			cli.HandleError(err)
 
-			dataGen := seeder.DataGen(ctx, seeder.DefaultStore, seeder.Faker())
+			dataGen := seeder.Seeder(ctx, seeder.DefaultStore, seeder.Faker())
 
-			userIDs, err := dataGen.MakeMeSomeFakeUserPlease(seeder.GenOption{Limit: limit})
+			userIDs, err := dataGen.CreateUser(seeder.Params{Limit: limit})
 			cli.HandleError(err)
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Created    %d    users\n",
+				"                     Created    %d    user\n",
 				len(userIDs),
 			)
 		},
@@ -52,9 +53,9 @@ func Faker(app serviceInitializer) *cobra.Command {
 	createUserCmd.Flags().IntP("limit", "l", 1, "How many users to be created")
 
 	// Clear users
-	clearUserCmd := &cobra.Command{
-		Use:   "clearUser",
-		Short: "Clear fake users",
+	deleteAllUserCmd := &cobra.Command{
+		Use:   "deleteAllUser",
+		Short: "Delete all user",
 
 		PreRunE: commandPreRunInitService(app),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -63,56 +64,56 @@ func Faker(app serviceInitializer) *cobra.Command {
 				err error
 			)
 
-			dataGen := seeder.DataGen(ctx, seeder.DefaultStore, seeder.Faker())
+			dataGen := seeder.Seeder(ctx, seeder.DefaultStore, seeder.Faker())
 
-			err = dataGen.ClearFakeUsers()
+			err = dataGen.DeleteAllUser()
 			cli.HandleError(err)
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Cleared    all    fake    users\n",
+				"                     Deleted    all    user\n",
 			)
 		},
 	}
 
 	// Create records
 	createRecordCmd := &cobra.Command{
-		Use:   "addRecords",
-		Short: "Create users",
+		Use:   "createRecord",
+		Short: "Create record",
 
 		PreRunE: commandPreRunInitService(app),
 		Run: func(cmd *cobra.Command, args []string) {
-			// var (
-			// 	ctx = context.Background()
-			//
-			// 	limitFlag = cmd.Flags().Lookup("limit").Value.String()
-			//
-			// 	limit int
-			// 	err   error
-			// )
-			//
-			// limit, err = strconv.Atoi(limitFlag)
-			// cli.HandleError(err)
-			//
-			// dataGen := seeder.DataGen(ctx, seeder.DefaultStore, seeder.Faker())
-			//
-			// // _, err := dataGen.MakeMeSomeFakeRecordPlease(seeder.GenOption{Limit: limit})
-			// // cli.HandleError(err)
-			//
-			// fmt.Fprintf(
-			// 	cmd.OutOrStdout(),
-			// 	"                     Created    %d    records\n",
-			// 	0,
-			// )
+			var (
+				ctx = context.Background()
+
+				limitFlag = cmd.Flags().Lookup("limit").Value.String()
+
+				limit int
+				err   error
+			)
+
+			limit, err = strconv.Atoi(limitFlag)
+			cli.HandleError(err)
+
+			dataGen := seeder.Seeder(ctx, seeder.DefaultStore, seeder.Faker())
+
+			recordIDs, err := dataGen.CreateRecord(&types.Module{}, seeder.Params{Limit: limit})
+			cli.HandleError(err)
+
+			fmt.Fprintf(
+				cmd.OutOrStdout(),
+				"                     Created    %d    record\n",
+				len(recordIDs),
+			)
 		},
 	}
 
 	createRecordCmd.Flags().IntP("limit", "l", 1, "How many records to be created")
 
-	// Clear records
-	clearRecordCmd := &cobra.Command{
-		Use:   "clearRecord",
-		Short: "Clear fake record",
+	// Delete records
+	deleteAllRecordCmd := &cobra.Command{
+		Use:   "deleteAllRecord",
+		Short: "Delete all record",
 
 		PreRunE: commandPreRunInitService(app),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -121,22 +122,22 @@ func Faker(app serviceInitializer) *cobra.Command {
 				err error
 			)
 
-			dataGen := seeder.DataGen(ctx, seeder.DefaultStore, seeder.Faker())
+			dataGen := seeder.Seeder(ctx, seeder.DefaultStore, seeder.Faker())
 
-			err = dataGen.ClearFakeRecords()
+			err = dataGen.DeleteAllRecord(&types.Module{})
 			cli.HandleError(err)
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Cleared    all    fake    records\n",
+				"                     Deleted    all    record\n",
 			)
 		},
 	}
 
 	// Clear users
-	clearAllFakeDataCmd := &cobra.Command{
-		Use:   "clearData",
-		Short: "Clear all fake data",
+	deleteAllCmd := &cobra.Command{
+		Use:   "deleteAll",
+		Short: "Delete all fake data",
 
 		PreRunE: commandPreRunInitService(app),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -145,24 +146,24 @@ func Faker(app serviceInitializer) *cobra.Command {
 				err error
 			)
 
-			dataGen := seeder.DataGen(ctx, seeder.DefaultStore, seeder.Faker())
+			dataGen := seeder.Seeder(ctx, seeder.DefaultStore, seeder.Faker())
 
-			err = dataGen.ClearAllFakeData()
+			err = dataGen.DeleteAll(&types.Module{})
 			cli.HandleError(err)
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Cleared    all    fake    data\n",
+				"                     Deleted    all    fake    data\n",
 			)
 		},
 	}
 
 	cmd.AddCommand(
 		createUserCmd,
-		clearUserCmd,
+		deleteAllUserCmd,
 		createRecordCmd,
-		clearRecordCmd,
-		clearAllFakeDataCmd,
+		deleteAllRecordCmd,
+		deleteAllCmd,
 	)
 
 	return cmd

@@ -163,30 +163,30 @@ func (h helper) lookupModuleByID(ID uint64) *types.Module {
 	return res
 }
 
-func TestMakeMeSomeFakeUserPlease(t *testing.T) {
+func TestCreateUser(t *testing.T) {
 	h := newHelper(t)
 	h.clearUsers()
 
 	limit := 10
-	gen := DataGen(h.ctx, DefaultStore, Faker())
+	gen := Seeder(h.ctx, DefaultStore, Faker())
 
-	userIDs, err := gen.MakeMeSomeFakeUserPlease(GenOption{limit})
+	userIDs, err := gen.CreateUser(Params{limit})
 	h.noError(err)
 	h.a.NotEqual(limit, len(userIDs))
 }
 
-func TestClearUsers(t *testing.T) {
+func TestClearAllUser(t *testing.T) {
 	h := newHelper(t)
 	h.clearUsers()
 
 	limit := 10
-	gen := DataGen(h.ctx, DefaultStore, Faker())
+	gen := Seeder(h.ctx, DefaultStore, Faker())
 
-	userIDs, err := gen.MakeMeSomeFakeUserPlease(GenOption{limit})
+	userIDs, err := gen.CreateUser(Params{limit})
 	h.noError(err)
 	h.a.NotEqual(limit, len(userIDs))
 
-	err = gen.ClearFakeUsers()
+	err = gen.DeleteAllUser()
 	h.noError(err)
 	h.a.NotEqual(0, len(userIDs))
 
@@ -206,9 +206,9 @@ func TestMakeMeSomeFakeRecordPlease(t *testing.T) {
 	)
 
 	limit := 10
-	gen := DataGen(h.ctx, DefaultStore, Faker())
+	gen := Seeder(h.ctx, DefaultStore, Faker())
 
-	recIDs, err := gen.MakeMeSomeFakeRecordPlease(m, GenOption{limit})
+	recIDs, err := gen.CreateRecord(m, Params{limit})
 	h.noError(err)
 	h.a.NotEqual(limit, len(recIDs))
 }

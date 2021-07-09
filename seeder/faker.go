@@ -1,7 +1,6 @@
 package seeder
 
 import (
-	"fmt"
 	"github.com/brianvoe/gofakeit/v6"
 	"strings"
 )
@@ -57,7 +56,6 @@ func (f faker) fakeValue(name, kind string, opt valueOptions) (val string, err e
 	// fixMe: lower method name
 	// Generate & return value from mapped methods
 	val, ok := f.fakeValueByName(name)
-	fmt.Println("Method found: ", val)
 	if ok {
 		return
 	}
@@ -75,7 +73,6 @@ func (f faker) fakeValue(name, kind string, opt valueOptions) (val string, err e
 	case valueKind == "int":
 		break
 	}
-	fmt.Println("Method not but value is: ", val)
 	return
 }
 

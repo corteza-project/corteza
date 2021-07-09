@@ -13,7 +13,6 @@ import (
 	"github.com/cortezaproject/corteza-server/store"
 	sTypes "github.com/cortezaproject/corteza-server/system/types"
 	"github.com/cortezaproject/corteza-server/tests/helpers"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
@@ -209,12 +208,6 @@ func TestMakeMeSomeFakeRecordPlease(t *testing.T) {
 	rec, err := gen.MakeMeSomeFakeRecordPlease(m)
 	h.noError(err)
 	h.a.NotNil(rec)
-
-	spew.Dump(rec)
-
-	// m = h.lookupModuleByID(m.ID)
-	// spew.Dump(rec)
-
 }
 
 func setModuleField(kind, name string, required bool) *types.ModuleField {

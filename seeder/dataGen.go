@@ -140,7 +140,6 @@ func (gen dataGen) MakeMeSomeFakeRecordPlease(mod *cTypes.Module) (*cTypes.Recor
 	}
 
 	for i, f := range mod.Fields {
-		fmt.Printf("At mod.Fields for loop: %+v", f)
 		err := gen.doTheFakeDataMagic(rec, uint(i), f)
 		if err != nil {
 			return nil, err
@@ -156,19 +155,18 @@ func (gen dataGen) MakeMeSomeFakeRecordPlease(mod *cTypes.Module) (*cTypes.Recor
 }
 
 // ClearFakeRecords clear all the fake user from DB
-func (gen dataGen) ClearFakeRecords() (err error) {
-	// fixMe module ID
+func (gen dataGen) ClearFakeRecords(mod *cTypes.Module) (err error) {
 	filter := cTypes.RecordFilter{
 		Labels: map[string]string{
 			fakeRecordLabelName: fakeDataLabel,
 		},
 	}
-	records, _, err := gen.store.SearchComposeRecords(gen.ctx, nil, filter)
+	records, _, err := gen.store.SearchComposeRecords(gen.ctx, mod, filter)
 	if err != nil {
 		return
 	}
 
-	err = gen.store.DeleteComposeRecord(gen.ctx, nil, records...)
+	err = gen.store.DeleteComposeRecord(gen.ctx, mod, records...)
 	if err != nil {
 		return
 	}
@@ -180,7 +178,6 @@ func (gen dataGen) ClearFakeRecords() (err error) {
 // better way to return error
 // user of method, maybe access third-party pkg from it
 func (gen dataGen) doTheFakeDataMagic(rec *cTypes.Record, place uint, field *cTypes.ModuleField) (err error) {
-	fmt.Println("\n At doTheFakeDataMagic: ", place, field.Kind)
 	// figure out what kind of field this is
 	//  - type
 	//  - name
@@ -221,19 +218,17 @@ func (gen dataGen) doTheFakeDataMagic(rec *cTypes.Record, place uint, field *cTy
 		Place: place, // in case of multi-value field this is ++
 	})
 
-	fmt.Printf("rec.Values: %+v", rec.Values.String())
-
 	return
 }
 
 // ClearAllFakeData will delete all the fake data from the DB
-func (gen dataGen) ClearAllFakeData() (err error) {
+func (gen dataGen) ClearAllFakeData(mod *cTypes.Module) (err error) {
 	err = gen.ClearFakeUsers()
 	if err != nil {
 		return
 	}
 
-	err = gen.ClearFakeRecords()
+	err = gen.ClearFakeRecords(mod)
 	if err != nil {
 		return err
 	}

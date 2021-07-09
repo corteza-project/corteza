@@ -18,12 +18,11 @@ package service
 import (
 	"context"
 	"fmt"
-	"strings"
-
 	"github.com/cortezaproject/corteza-server/compose/types"
 	"github.com/cortezaproject/corteza-server/pkg/actionlog"
 	"github.com/cortezaproject/corteza-server/pkg/rbac"
 	"github.com/spf13/cast"
+	"strings"
 )
 
 type (

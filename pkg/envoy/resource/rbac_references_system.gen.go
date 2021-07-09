@@ -7,6 +7,7 @@ package resource
 //
 
 // Definitions file that controls how this file is generated:
+// - system.api-gw-route.yaml
 // - system.application.yaml
 // - system.auth-client.yaml
 // - system.role.yaml
@@ -17,6 +18,19 @@ package resource
 import (
 	"github.com/cortezaproject/corteza-server/system/types"
 )
+
+// SystemApiGwRouteRbacReferences generates RBAC references
+//
+// Resources with "envoy: false" are skipped
+//
+// This function is auto-generated
+func SystemApiGwRouteRbacReferences(apiGwRoute string) (res *Ref, pp []*Ref, err error) {
+	if apiGwRoute != "*" {
+		res = &Ref{ResourceType: types.ApiGwRouteResourceType, Identifiers: MakeIdentifiers(apiGwRoute)}
+	}
+
+	return
+}
 
 // SystemApplicationRbacReferences generates RBAC references
 //

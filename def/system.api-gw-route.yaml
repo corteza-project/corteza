@@ -1,0 +1,8 @@
+rbac:
+  operations:
+    read:
+      description: Read API Gateway route
+    update:
+      description: Update API Gateway route
+    delete:
+      description: Delete API Gateway route

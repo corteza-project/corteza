@@ -6,24 +6,20 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cortezaproject/corteza-server/automation/types"
 	"github.com/cortezaproject/corteza-server/pkg/filter"
 )
 
 type (
-	FuncArgs []*types.Expr
-
 	ApigwFunctionKind string
 
 	FuncParams map[string]interface{}
 
 	Function struct {
-		ID     uint64 `json:"functionID,string"`
-		Route  uint64 `json:"routeID,string"`
-		Weight uint64 `json:"weight"`
-		Ref    string `json:"ref,omitempty"`
-		Kind   string `json:"kind,omitempty"`
-		// Arguments FuncArgs               `json:"args"`
+		ID     uint64     `json:"functionID,string"`
+		Route  uint64     `json:"routeID,string"`
+		Weight uint64     `json:"weight"`
+		Ref    string     `json:"ref,omitempty"`
+		Kind   string     `json:"kind,omitempty"`
 		Params FuncParams `json:"params"`
 
 		CreatedAt time.Time  `json:"createdAt,omitempty"`
@@ -60,23 +56,6 @@ const (
 	ApigwFunctionKindProcesser ApigwFunctionKind = "functionProcesser"
 	ApigwFunctionKindExpediter ApigwFunctionKind = "functionExpediter"
 )
-
-func (vv *FuncArgs) Scan(value interface{}) (err error) {
-	aux := []*types.Expr{}
-	err = json.Unmarshal([]byte(value.([]byte)), &aux)
-
-	if err != nil {
-		return
-	}
-
-	*vv = aux
-
-	return
-}
-
-func (vv FuncArgs) Value() (driver.Value, error) {
-	return json.Marshal(vv)
-}
 
 func (vv *FuncParams) Scan(value interface{}) (err error) {
 	if err := json.Unmarshal(value.([]byte), vv); err != nil {

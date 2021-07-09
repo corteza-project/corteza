@@ -17,8 +17,9 @@ type (
 		store storeService
 		faker fakerService
 	}
-	genOption struct {
-		totalRecord int
+	GenOption struct {
+		// (optional) no record to be generate; Default value will be 1
+		Limit int
 	}
 	userGenOption struct {
 	}
@@ -40,6 +41,10 @@ type (
 	}
 )
 
+var (
+	DefaultStore store.Storer
+)
+
 const (
 	fakeDataLabel       = "generated"
 	fakeUserLabelName   = "generatedUser"
@@ -47,11 +52,20 @@ const (
 )
 
 func DataGen(ctx context.Context, store store.Storer, faker fakerService) *dataGen {
+	DefaultStore = store
 	return &dataGen{ctx, store, faker}
 }
 
-// makeMeFakeDataLabel return the label for generate data
-func (gen dataGen) makeMeFakeDataLabel(resourceID uint64, kind, name string) *lTypes.Label {
+// getLimit return data generation limit; It will return Default(1) if limit is 0
+func (gOpt GenOption) getLimit() int {
+	if gOpt.Limit == 0 {
+		return 1
+	}
+	return gOpt.Limit
+}
+
+// MakeMeFakeDataLabel return the label for generate data
+func (gen dataGen) MakeMeFakeDataLabel(resourceID uint64, kind, name string) *lTypes.Label {
 	return &lTypes.Label{
 		Kind:       kind,
 		ResourceID: resourceID,
@@ -60,23 +74,23 @@ func (gen dataGen) makeMeFakeDataLabel(resourceID uint64, kind, name string) *lT
 	}
 }
 
-// makeMeSomeFakeUserPlease creates given no of users into DB
-func (gen dataGen) makeMeSomeFakeUserPlease(opt genOption) (IDs []uint64, err error) {
-	var userIDs []uint64
+// MakeMeSomeFakeUserPlease creates given no of users into DB
+func (gen dataGen) MakeMeSomeFakeUserPlease(opt GenOption) (IDs []uint64, err error) {
 	var users []*sTypes.User
 	var labels []*lTypes.Label
 
-	for i := 0; i < opt.totalRecord; i++ {
+	for i := 0; i < opt.getLimit(); i++ {
 		var user sTypes.User
 		user.ID = id.Next()
 		user.Email, _ = gen.faker.fakeValueByName("Email")
 		user.Name, _ = gen.faker.fakeValueByName("Name")
 		user.Handle = gen.faker.fakeUserHandle(user.Name)
 		user.Kind = sTypes.BotUser
+		user.CreatedAt = time.Now()
 
-		userIDs = append(userIDs, user.ID)
+		IDs = append(IDs, user.ID)
 		users = append(users, &user)
-		labels = append(labels, gen.makeMeFakeDataLabel(
+		labels = append(labels, gen.MakeMeFakeDataLabel(
 			user.ID,
 			user.LabelResourceKind(),
 			fakeUserLabelName,
@@ -96,8 +110,8 @@ func (gen dataGen) makeMeSomeFakeUserPlease(opt genOption) (IDs []uint64, err er
 	return
 }
 
-// clearFakeUser clear all the fake user from DB
-func (gen dataGen) clearFakeUsers() (err error) {
+// ClearFakeUsers clear all the fake user from DB
+func (gen dataGen) ClearFakeUsers() (err error) {
 	filter := sTypes.UserFilter{
 		Labels: map[string]string{
 			fakeUserLabelName: fakeDataLabel,
@@ -116,8 +130,8 @@ func (gen dataGen) clearFakeUsers() (err error) {
 	return
 }
 
-// makeMeSomeFakeRecordPlease creates given no of record into DB
-func (gen dataGen) makeMeSomeFakeRecordPlease(mod *cTypes.Module) (*cTypes.Record, error) {
+// MakeMeSomeFakeRecordPlease creates given no of record into DB
+func (gen dataGen) MakeMeSomeFakeRecordPlease(mod *cTypes.Module) (*cTypes.Record, error) {
 	rec := &cTypes.Record{
 		ID:          id.Next(),
 		NamespaceID: mod.NamespaceID,
@@ -141,8 +155,8 @@ func (gen dataGen) makeMeSomeFakeRecordPlease(mod *cTypes.Module) (*cTypes.Recor
 	return rec, nil
 }
 
-// clearFakeUser clear all the fake user from DB
-func (gen dataGen) clearFakeRecords() (err error) {
+// ClearFakeRecords clear all the fake user from DB
+func (gen dataGen) ClearFakeRecords() (err error) {
 	// fixMe module ID
 	filter := cTypes.RecordFilter{
 		Labels: map[string]string{
@@ -212,14 +226,14 @@ func (gen dataGen) doTheFakeDataMagic(rec *cTypes.Record, place uint, field *cTy
 	return
 }
 
-// clearAllFakeData will delete all the fake data from the DB
-func (gen dataGen) clearAllFakeData() (err error) {
-	err = gen.clearFakeUsers()
+// ClearAllFakeData will delete all the fake data from the DB
+func (gen dataGen) ClearAllFakeData() (err error) {
+	err = gen.ClearFakeUsers()
 	if err != nil {
 		return
 	}
 
-	err = gen.clearFakeRecords()
+	err = gen.ClearFakeRecords()
 	if err != nil {
 		return err
 	}

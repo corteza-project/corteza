@@ -30,8 +30,7 @@ type (
 )
 
 var (
-	testApp      *app.CortezaApp
-	DefaultStore store.Storer
+	testApp *app.CortezaApp
 )
 
 func init() {
@@ -105,7 +104,7 @@ func (h helper) clearUsers() {
 
 func (h helper) lookupUsers() (sTypes.UserSet, error) {
 	filter := sTypes.UserFilter{Labels: map[string]string{fakeUserLabelName: fakeDataLabel}}
-	users, _, err := store.Storer.SearchUsers(context.Background(), filter)
+	users, _, err := DefaultStore.SearchUsers(h.ctx, filter)
 	h.noError(err)
 
 	return users, err
@@ -169,12 +168,12 @@ func TestMakeMeSomeFakeUserPlease(t *testing.T) {
 	h := newHelper(t)
 	h.clearUsers()
 
-	totalFakeRecord := 10
+	limit := 10
 	gen := DataGen(h.ctx, DefaultStore, Faker())
 
-	userIDs, err := gen.makeMeSomeFakeUserPlease(genOption{totalFakeRecord})
+	userIDs, err := gen.MakeMeSomeFakeUserPlease(GenOption{limit})
 	h.noError(err)
-	h.a.NotEqual(totalFakeRecord, len(userIDs))
+	h.a.NotEqual(limit, len(userIDs))
 }
 
 func TestClearUsers(t *testing.T) {
@@ -184,17 +183,17 @@ func TestClearUsers(t *testing.T) {
 	totalFakeRecord := 10
 	gen := DataGen(h.ctx, DefaultStore, Faker())
 
-	userIDs, err := gen.makeMeSomeFakeUserPlease(genOption{totalFakeRecord})
+	userIDs, err := gen.MakeMeSomeFakeUserPlease(GenOption{totalFakeRecord})
 	h.noError(err)
 	h.a.NotEqual(totalFakeRecord, len(userIDs))
 
-	err = gen.clearFakeUsers()
+	err = gen.ClearFakeUsers()
 	h.noError(err)
 	h.a.NotEqual(0, len(userIDs))
 
 }
 
-func TestMakeMeSomeFakeDataPlease(t *testing.T) {
+func TestMakeMeSomeFakeRecordPlease(t *testing.T) {
 	h := newHelper(t)
 	h.clearNamespaces()
 	h.clearModules()
@@ -207,7 +206,7 @@ func TestMakeMeSomeFakeDataPlease(t *testing.T) {
 
 	gen := DataGen(h.ctx, DefaultStore, Faker())
 
-	rec, err := gen.makeMeSomeFakeRecordPlease(m)
+	rec, err := gen.MakeMeSomeFakeRecordPlease(m)
 	h.noError(err)
 	h.a.NotNil(rec)
 

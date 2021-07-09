@@ -7,10 +7,10 @@ package resource
 //
 
 // Definitions file that controls how this file is generated:
-// - system.api-gw-route.yaml
 // - system.application.yaml
 // - system.auth-client.yaml
 // - system.role.yaml
+// - system.route.yaml
 // - system.template.yaml
 // - system.user.yaml
 // - system.yaml
@@ -18,19 +18,6 @@ package resource
 import (
 	"github.com/cortezaproject/corteza-server/system/types"
 )
-
-// SystemApiGwRouteRbacReferences generates RBAC references
-//
-// Resources with "envoy: false" are skipped
-//
-// This function is auto-generated
-func SystemApiGwRouteRbacReferences(apiGwRoute string) (res *Ref, pp []*Ref, err error) {
-	if apiGwRoute != "*" {
-		res = &Ref{ResourceType: types.ApiGwRouteResourceType, Identifiers: MakeIdentifiers(apiGwRoute)}
-	}
-
-	return
-}
 
 // SystemApplicationRbacReferences generates RBAC references
 //
@@ -66,6 +53,19 @@ func SystemAuthClientRbacReferences(authClient string) (res *Ref, pp []*Ref, err
 func SystemRoleRbacReferences(role string) (res *Ref, pp []*Ref, err error) {
 	if role != "*" {
 		res = &Ref{ResourceType: types.RoleResourceType, Identifiers: MakeIdentifiers(role)}
+	}
+
+	return
+}
+
+// SystemRouteRbacReferences generates RBAC references
+//
+// Resources with "envoy: false" are skipped
+//
+// This function is auto-generated
+func SystemRouteRbacReferences(route string) (res *Ref, pp []*Ref, err error) {
+	if route != "*" {
+		res = &Ref{ResourceType: types.RouteResourceType, Identifiers: MakeIdentifiers(route)}
 	}
 
 	return

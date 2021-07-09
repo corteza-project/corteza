@@ -7,10 +7,10 @@ package service
 //
 
 // Definitions file that controls how this file is generated:
-// - system.api-gw-route.yaml
 // - system.application.yaml
 // - system.auth-client.yaml
 // - system.role.yaml
+// - system.route.yaml
 // - system.template.yaml
 // - system.user.yaml
 // - system.yaml
@@ -62,21 +62,6 @@ func (svc accessControl) Effective(ctx context.Context, rr ...rbac.Resource) (ee
 
 func (svc accessControl) List() (out []map[string]string) {
 	def := []map[string]string{
-		{
-			"type": types.ApiGwRouteResourceType,
-			"any":  types.ApiGwRouteRbacResource(0),
-			"op":   "read",
-		},
-		{
-			"type": types.ApiGwRouteResourceType,
-			"any":  types.ApiGwRouteRbacResource(0),
-			"op":   "update",
-		},
-		{
-			"type": types.ApiGwRouteResourceType,
-			"any":  types.ApiGwRouteRbacResource(0),
-			"op":   "delete",
-		},
 		{
 			"type": types.ApplicationResourceType,
 			"any":  types.ApplicationRbacResource(0),
@@ -131,6 +116,21 @@ func (svc accessControl) List() (out []map[string]string) {
 			"type": types.RoleResourceType,
 			"any":  types.RoleRbacResource(0),
 			"op":   "members.manage",
+		},
+		{
+			"type": types.RouteResourceType,
+			"any":  types.RouteRbacResource(0),
+			"op":   "read",
+		},
+		{
+			"type": types.RouteResourceType,
+			"any":  types.RouteRbacResource(0),
+			"op":   "update",
+		},
+		{
+			"type": types.RouteResourceType,
+			"any":  types.RouteRbacResource(0),
+			"op":   "delete",
 		},
 		{
 			"type": types.TemplateResourceType,
@@ -319,27 +319,6 @@ func (svc accessControl) FindRulesByRoleID(ctx context.Context, roleID uint64) (
 	return svc.rbac.FindRulesByRoleID(roleID), nil
 }
 
-// CanReadApiGwRoute checks if current user can read api gateway route
-//
-// This function is auto-generated
-func (svc accessControl) CanReadApiGwRoute(ctx context.Context, r *types.ApiGwRoute) bool {
-	return svc.can(ctx, "read", r)
-}
-
-// CanUpdateApiGwRoute checks if current user can update api gateway route
-//
-// This function is auto-generated
-func (svc accessControl) CanUpdateApiGwRoute(ctx context.Context, r *types.ApiGwRoute) bool {
-	return svc.can(ctx, "update", r)
-}
-
-// CanDeleteApiGwRoute checks if current user can delete api gateway route
-//
-// This function is auto-generated
-func (svc accessControl) CanDeleteApiGwRoute(ctx context.Context, r *types.ApiGwRoute) bool {
-	return svc.can(ctx, "delete", r)
-}
-
 // CanReadApplication checks if current user can read application
 //
 // This function is auto-generated
@@ -415,6 +394,27 @@ func (svc accessControl) CanDeleteRole(ctx context.Context, r *types.Role) bool 
 // This function is auto-generated
 func (svc accessControl) CanManageMembersOnRole(ctx context.Context, r *types.Role) bool {
 	return svc.can(ctx, "members.manage", r)
+}
+
+// CanReadRoute checks if current user can read api gateway route
+//
+// This function is auto-generated
+func (svc accessControl) CanReadRoute(ctx context.Context, r *types.Route) bool {
+	return svc.can(ctx, "read", r)
+}
+
+// CanUpdateRoute checks if current user can update api gateway route
+//
+// This function is auto-generated
+func (svc accessControl) CanUpdateRoute(ctx context.Context, r *types.Route) bool {
+	return svc.can(ctx, "update", r)
+}
+
+// CanDeleteRoute checks if current user can delete api gateway route
+//
+// This function is auto-generated
+func (svc accessControl) CanDeleteRoute(ctx context.Context, r *types.Route) bool {
+	return svc.can(ctx, "delete", r)
 }
 
 // CanReadTemplate checks if current user can read template
@@ -597,14 +597,14 @@ func (svc accessControl) CanCreateApiGwRoute(ctx context.Context) bool {
 // This function is auto-generated
 func rbacResourceValidator(r string, oo ...string) error {
 	switch rbac.ResourceType(r) {
-	case types.ApiGwRouteResourceType:
-		return rbacApiGwRouteResourceValidator(r, oo...)
 	case types.ApplicationResourceType:
 		return rbacApplicationResourceValidator(r, oo...)
 	case types.AuthClientResourceType:
 		return rbacAuthClientResourceValidator(r, oo...)
 	case types.RoleResourceType:
 		return rbacRoleResourceValidator(r, oo...)
+	case types.RouteResourceType:
+		return rbacRouteResourceValidator(r, oo...)
 	case types.TemplateResourceType:
 		return rbacTemplateResourceValidator(r, oo...)
 	case types.UserResourceType:
@@ -621,12 +621,6 @@ func rbacResourceValidator(r string, oo ...string) error {
 // This function is auto-generated
 func rbacResourceOperations(r string) map[string]bool {
 	switch rbac.ResourceType(r) {
-	case types.ApiGwRouteResourceType:
-		return map[string]bool{
-			"read":   true,
-			"update": true,
-			"delete": true,
-		}
 	case types.ApplicationResourceType:
 		return map[string]bool{
 			"read":   true,
@@ -646,6 +640,12 @@ func rbacResourceOperations(r string) map[string]bool {
 			"update":         true,
 			"delete":         true,
 			"members.manage": true,
+		}
+	case types.RouteResourceType:
+		return map[string]bool{
+			"read":   true,
+			"update": true,
+			"delete": true,
 		}
 	case types.TemplateResourceType:
 		return map[string]bool{
@@ -680,57 +680,6 @@ func rbacResourceOperations(r string) map[string]bool {
 			"reminder.assign":         true,
 			"queue.create":            true,
 			"api-gw-route.create":     true,
-		}
-	}
-
-	return nil
-}
-
-// rbacApiGwRouteResourceValidator checks validity of rbac resource and operations
-//
-// Can be called without operations to check for validity of resource string only
-//
-// This function is auto-generated
-func rbacApiGwRouteResourceValidator(r string, oo ...string) error {
-	defOps := rbacResourceOperations(r)
-	for _, o := range oo {
-		if !defOps[o] {
-			return fmt.Errorf("invalid operation '%s' for system ApiGwRoute resource", o)
-		}
-	}
-
-	if !strings.HasPrefix(r, types.ApiGwRouteResourceType) {
-		// expecting resource to always include path
-		return fmt.Errorf("invalid resource type")
-	}
-
-	const sep = "/"
-	var (
-		specIdUsed = true
-
-		pp  = strings.Split(strings.Trim(r[len(types.ApiGwRouteResourceType):], sep), sep)
-		prc = []string{
-			"ID",
-		}
-	)
-
-	if len(pp) != len(prc) {
-		return fmt.Errorf("invalid resource path structure")
-	}
-
-	for i, p := range pp {
-		if p == "*" {
-			if !specIdUsed {
-				return fmt.Errorf("invalid resource path wildcard level (%d) for ApiGwRoute", i)
-			}
-
-			specIdUsed = false
-			continue
-		}
-
-		specIdUsed = true
-		if _, err := cast.ToUint64E(p); err != nil {
-			return fmt.Errorf("invalid reference for %s: '%s'", prc[i], p)
 		}
 	}
 
@@ -875,6 +824,57 @@ func rbacRoleResourceValidator(r string, oo ...string) error {
 		if p == "*" {
 			if !specIdUsed {
 				return fmt.Errorf("invalid resource path wildcard level (%d) for Role", i)
+			}
+
+			specIdUsed = false
+			continue
+		}
+
+		specIdUsed = true
+		if _, err := cast.ToUint64E(p); err != nil {
+			return fmt.Errorf("invalid reference for %s: '%s'", prc[i], p)
+		}
+	}
+
+	return nil
+}
+
+// rbacRouteResourceValidator checks validity of rbac resource and operations
+//
+// Can be called without operations to check for validity of resource string only
+//
+// This function is auto-generated
+func rbacRouteResourceValidator(r string, oo ...string) error {
+	defOps := rbacResourceOperations(r)
+	for _, o := range oo {
+		if !defOps[o] {
+			return fmt.Errorf("invalid operation '%s' for system Route resource", o)
+		}
+	}
+
+	if !strings.HasPrefix(r, types.RouteResourceType) {
+		// expecting resource to always include path
+		return fmt.Errorf("invalid resource type")
+	}
+
+	const sep = "/"
+	var (
+		specIdUsed = true
+
+		pp  = strings.Split(strings.Trim(r[len(types.RouteResourceType):], sep), sep)
+		prc = []string{
+			"ID",
+		}
+	)
+
+	if len(pp) != len(prc) {
+		return fmt.Errorf("invalid resource path structure")
+	}
+
+	for i, p := range pp {
+		if p == "*" {
+			if !specIdUsed {
+				return fmt.Errorf("invalid resource path wildcard level (%d) for Route", i)
 			}
 
 			specIdUsed = false

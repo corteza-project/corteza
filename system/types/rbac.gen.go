@@ -7,10 +7,10 @@ package types
 //
 
 // Definitions file that controls how this file is generated:
-// - system.api-gw-route.yaml
 // - system.application.yaml
 // - system.auth-client.yaml
 // - system.role.yaml
+// - system.route.yaml
 // - system.template.yaml
 // - system.user.yaml
 // - system.yaml
@@ -28,45 +28,14 @@ type (
 )
 
 const (
-	ApiGwRouteResourceType  = "corteza::system:api-gw-route"
 	ApplicationResourceType = "corteza::system:application"
 	AuthClientResourceType  = "corteza::system:auth-client"
 	RoleResourceType        = "corteza::system:role"
+	RouteResourceType       = "corteza::system:route"
 	TemplateResourceType    = "corteza::system:template"
 	UserResourceType        = "corteza::system:user"
 	ComponentResourceType   = "corteza::system"
 )
-
-// RbacResource returns string representation of RBAC resource for ApiGwRoute by calling ApiGwRouteRbacResource fn
-//
-// RBAC resource is in the corteza::system:api-gw-route/... format
-//
-// This function is auto-generated
-func (r ApiGwRoute) RbacResource() string {
-	return ApiGwRouteRbacResource(r.ID)
-}
-
-// ApiGwRouteRbacResource returns string representation of RBAC resource for ApiGwRoute
-//
-// RBAC resource is in the corteza::system:api-gw-route/... format
-//
-// This function is auto-generated
-func ApiGwRouteRbacResource(id uint64) string {
-	cpts := []interface{}{ApiGwRouteResourceType}
-	if id != 0 {
-		cpts = append(cpts, strconv.FormatUint(id, 10))
-	} else {
-		cpts = append(cpts, "*")
-	}
-
-	return fmt.Sprintf(ApiGwRouteRbacResourceTpl(), cpts...)
-
-}
-
-// @todo template
-func ApiGwRouteRbacResourceTpl() string {
-	return "%s/%s"
-}
 
 // RbacResource returns string representation of RBAC resource for Application by calling ApplicationRbacResource fn
 //
@@ -158,6 +127,37 @@ func RoleRbacResource(id uint64) string {
 
 // @todo template
 func RoleRbacResourceTpl() string {
+	return "%s/%s"
+}
+
+// RbacResource returns string representation of RBAC resource for Route by calling RouteRbacResource fn
+//
+// RBAC resource is in the corteza::system:route/... format
+//
+// This function is auto-generated
+func (r Route) RbacResource() string {
+	return RouteRbacResource(r.ID)
+}
+
+// RouteRbacResource returns string representation of RBAC resource for Route
+//
+// RBAC resource is in the corteza::system:route/... format
+//
+// This function is auto-generated
+func RouteRbacResource(id uint64) string {
+	cpts := []interface{}{RouteResourceType}
+	if id != 0 {
+		cpts = append(cpts, strconv.FormatUint(id, 10))
+	} else {
+		cpts = append(cpts, "*")
+	}
+
+	return fmt.Sprintf(RouteRbacResourceTpl(), cpts...)
+
+}
+
+// @todo template
+func RouteRbacResourceTpl() string {
 	return "%s/%s"
 }
 

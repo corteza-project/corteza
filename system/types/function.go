@@ -53,7 +53,7 @@ const (
 	ApigwFunctionKindVerifier  ApigwFunctionKind = "functionVerifier"
 	ApigwFunctionKindValidator ApigwFunctionKind = "functionValidator"
 	ApigwFunctionKindMatcher   ApigwFunctionKind = "functionMatcher"
-	ApigwFunctionKindProcesser ApigwFunctionKind = "functionProcesser"
+	ApigwFunctionKindProcessor ApigwFunctionKind = "functionProcessor"
 	ApigwFunctionKindExpediter ApigwFunctionKind = "functionExpediter"
 )
 

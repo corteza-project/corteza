@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cortezaproject/corteza-server/compose/types"
+	"github.com/cortezaproject/corteza-server/pkg/id"
 	"github.com/cortezaproject/corteza-server/seeder"
 	"strconv"
 
@@ -14,13 +15,13 @@ import (
 func Seeder(app serviceInitializer) *cobra.Command {
 	// Fake data generation commands.
 	cmd := &cobra.Command{
-		Use:   "faker",
-		Short: "Fake data generation",
+		Use:   "seeder",
+		Short: "Seeds fake data",
 	}
 
 	// Create users
-	createUserCmd := &cobra.Command{
-		Use:   "createUser",
+	createUsersCmd := &cobra.Command{
+		Use:   "users create",
 		Short: "Create user",
 
 		PreRunE: commandPreRunInitService(app),
@@ -44,17 +45,17 @@ func Seeder(app serviceInitializer) *cobra.Command {
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Created    %d    user\n",
+				"                     Created    %d    users\n",
 				len(userIDs),
 			)
 		},
 	}
 
-	createUserCmd.Flags().IntP("limit", "l", 1, "How many users to be created")
+	createUsersCmd.Flags().IntP("limit", "l", 1, "How many users to be created")
 
 	// Clear users
-	deleteAllUserCmd := &cobra.Command{
-		Use:   "deleteAllUser",
+	deleteAllUsersCmd := &cobra.Command{
+		Use:   "users delete all",
 		Short: "Delete all user",
 
 		PreRunE: commandPreRunInitService(app),
@@ -71,14 +72,14 @@ func Seeder(app serviceInitializer) *cobra.Command {
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Deleted    all    user\n",
+				"                     Deleted    all    users\n",
 			)
 		},
 	}
 
 	// Create records
-	createRecordCmd := &cobra.Command{
-		Use:   "createRecord",
+	createRecordsCmd := &cobra.Command{
+		Use:   "records create",
 		Short: "Create record",
 
 		PreRunE: commandPreRunInitService(app),
@@ -97,22 +98,22 @@ func Seeder(app serviceInitializer) *cobra.Command {
 
 			dataGen := seeder.Seeder(ctx, seeder.DefaultStore, seeder.Faker())
 
-			recordIDs, err := dataGen.CreateRecord(&types.Module{}, seeder.Params{Limit: limit})
+			recordIDs, err := dataGen.CreateRecord(id.Next(), seeder.Params{Limit: limit})
 			cli.HandleError(err)
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Created    %d    record\n",
+				"                     Created    %d    records\n",
 				len(recordIDs),
 			)
 		},
 	}
 
-	createRecordCmd.Flags().IntP("limit", "l", 1, "How many records to be created")
+	createRecordsCmd.Flags().IntP("limit", "l", 1, "How many records to be created")
 
 	// Delete records
-	deleteAllRecordCmd := &cobra.Command{
-		Use:   "deleteAllRecord",
+	deleteAllRecordsCmd := &cobra.Command{
+		Use:   "record delete all",
 		Short: "Delete all record",
 
 		PreRunE: commandPreRunInitService(app),
@@ -129,14 +130,14 @@ func Seeder(app serviceInitializer) *cobra.Command {
 
 			fmt.Fprintf(
 				cmd.OutOrStdout(),
-				"                     Deleted    all    record\n",
+				"                     Deleted    all    records\n",
 			)
 		},
 	}
 
 	// Clear users
 	deleteAllCmd := &cobra.Command{
-		Use:   "deleteAll",
+		Use:   "delete all",
 		Short: "Delete all fake data",
 
 		PreRunE: commandPreRunInitService(app),
@@ -159,10 +160,10 @@ func Seeder(app serviceInitializer) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		createUserCmd,
-		deleteAllUserCmd,
-		createRecordCmd,
-		deleteAllRecordCmd,
+		createUsersCmd,
+		deleteAllUsersCmd,
+		createRecordsCmd,
+		deleteAllRecordsCmd,
 		deleteAllCmd,
 	)
 

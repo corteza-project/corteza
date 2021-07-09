@@ -33,6 +33,7 @@ type (
 		SearchUsers(ctx context.Context, f sTypes.UserFilter) (sTypes.UserSet, sTypes.UserFilter, error)
 		CreateUser(ctx context.Context, rr ...*sTypes.User) error
 		DeleteUser(ctx context.Context, rr ...*sTypes.User) error
+		LookupComposeModuleByID(ctx context.Context, id uint64) (*cTypes.Module, error)
 		SearchComposeRecords(ctx context.Context, _mod *cTypes.Module, f cTypes.RecordFilter) (cTypes.RecordSet, cTypes.RecordFilter, error)
 		CreateComposeRecord(ctx context.Context, mod *cTypes.Module, rr ...*cTypes.Record) error
 		DeleteComposeRecord(ctx context.Context, m *cTypes.Module, rr ...*cTypes.Record) error
@@ -44,9 +45,7 @@ var (
 )
 
 const (
-	fakeDataLabel       = "generated"
-	fakeUserLabelName   = "generatedUser"
-	fakeRecordLabelName = "generatedRecord"
+	fakeDataLabel = "generated"
 )
 
 func Seeder(ctx context.Context, store store.Storer, faker fakerService) *seeder {
@@ -91,7 +90,7 @@ func (s seeder) CreateUser(params Params) (IDs []uint64, err error) {
 		labels = append(labels, s.CreateLabel(
 			user.ID,
 			user.LabelResourceKind(),
-			fakeUserLabelName,
+			fakeDataLabel,
 		))
 	}
 
@@ -112,7 +111,7 @@ func (s seeder) CreateUser(params Params) (IDs []uint64, err error) {
 func (s seeder) DeleteAllUser() (err error) {
 	filter := sTypes.UserFilter{
 		Labels: map[string]string{
-			fakeUserLabelName: fakeDataLabel,
+			fakeDataLabel: fakeDataLabel,
 		},
 	}
 	users, _, err := s.store.SearchUsers(s.ctx, filter)
@@ -128,11 +127,31 @@ func (s seeder) DeleteAllUser() (err error) {
 	return
 }
 
+func (s seeder) LookupModuleByID(ID uint64) (mod *cTypes.Module, err error) {
+	if ID == 0 {
+		err = fmt.Errorf("invalid ID for module")
+		return nil, err
+	}
+	mod, err = s.store.LookupComposeModuleByID(s.ctx, ID)
+	if err != nil {
+		return
+	}
+	return
+}
+
 // CreateRecord creates given no of record into DB
-func (s seeder) CreateRecord(mod *cTypes.Module, params Params) (IDs []uint64, err error) {
+func (s seeder) CreateRecord(moduleID uint64, params Params) (IDs []uint64, err error) {
 	var records []*cTypes.Record
 	var labels []*lTypes.Label
 
+	mod, err := s.LookupModuleByID(moduleID)
+	if mod == nil {
+		return IDs, fmt.Errorf("module not found")
+	}
+
+	if err != nil {
+		return nil, err
+	}
 	for i := 0; i < params.getLimit(); i++ {
 		rec := &cTypes.Record{
 			ID:          id.Next(),
@@ -152,7 +171,7 @@ func (s seeder) CreateRecord(mod *cTypes.Module, params Params) (IDs []uint64, e
 		labels = append(labels, s.CreateLabel(
 			rec.ID,
 			rec.LabelResourceKind(),
-			fakeRecordLabelName,
+			fakeDataLabel,
 		))
 	}
 
@@ -217,7 +236,7 @@ func (s seeder) setRecordValues(rec *cTypes.Record, place uint, field *cTypes.Mo
 func (s seeder) DeleteAllRecord(mod *cTypes.Module) (err error) {
 	filter := cTypes.RecordFilter{
 		Labels: map[string]string{
-			fakeRecordLabelName: fakeDataLabel,
+			fakeDataLabel: fakeDataLabel,
 		},
 	}
 	records, _, err := s.store.SearchComposeRecords(s.ctx, mod, filter)

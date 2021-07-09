@@ -408,7 +408,8 @@ func (app *CortezaApp) InitServices(ctx context.Context) (err error) {
 		}
 	}
 
-	_ = seeder.DataGen(ctx, app.Store, seeder.Faker())
+	// Initializing seeder
+	_ = seeder.Seeder(ctx, app.Store, seeder.Faker())
 
 	app.lvl = bootLevelServicesInitialized
 	return

@@ -96,7 +96,7 @@ func (app *CortezaApp) InitCLI() {
 		federationCommands.Sync(ctx, app),
 		cli.EnvCommand(),
 		cli.VersionCommand(),
-		fakerCommands.Seeder(app),
+		fakerCommands.Seeder(ctx, app),
 	)
 
 }

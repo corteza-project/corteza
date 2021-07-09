@@ -102,7 +102,7 @@ func (h helper) clearUsers() {
 }
 
 func (h helper) lookupUsers() (sTypes.UserSet, error) {
-	filter := sTypes.UserFilter{Labels: map[string]string{fakeUserLabelName: fakeDataLabel}}
+	filter := sTypes.UserFilter{Labels: map[string]string{fakeDataLabel: fakeDataLabel}}
 	users, _, err := DefaultStore.SearchUsers(h.ctx, filter)
 	h.noError(err)
 
@@ -208,7 +208,12 @@ func TestMakeMeSomeFakeRecordPlease(t *testing.T) {
 	limit := 10
 	gen := Seeder(h.ctx, DefaultStore, Faker())
 
-	recIDs, err := gen.CreateRecord(m, Params{limit})
+	recIDs, err := gen.CreateRecord(RecordParams{
+		NamespaceID:     n.ID,
+		NamespaceHandle: n.Slug,
+		ModuleID:        m.ID,
+		ModuleHandle:    m.Handle,
+	})
 	h.noError(err)
 	h.a.NotEqual(limit, len(recIDs))
 }

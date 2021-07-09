@@ -21,6 +21,13 @@ type (
 		// (optional) no record to be generate; Default value will be 1
 		Limit int
 	}
+	RecordParams struct {
+		NamespaceID     uint64
+		NamespaceHandle string
+		ModuleID        uint64
+		ModuleHandle    string
+		Params
+	}
 
 	fakerService interface {
 		fakeValueByName(name string) (val string, ok bool)
@@ -33,7 +40,12 @@ type (
 		SearchUsers(ctx context.Context, f sTypes.UserFilter) (sTypes.UserSet, sTypes.UserFilter, error)
 		CreateUser(ctx context.Context, rr ...*sTypes.User) error
 		DeleteUser(ctx context.Context, rr ...*sTypes.User) error
+
+		LookupComposeNamespaceBySlug(ctx context.Context, slug string) (*cTypes.Namespace, error)
+		LookupComposeNamespaceByID(ctx context.Context, id uint64) (*cTypes.Namespace, error)
+		LookupComposeModuleByNamespaceIDHandle(ctx context.Context, namespaceID uint64, name string) (*cTypes.Module, error)
 		LookupComposeModuleByID(ctx context.Context, id uint64) (*cTypes.Module, error)
+
 		SearchComposeRecords(ctx context.Context, _mod *cTypes.Module, f cTypes.RecordFilter) (cTypes.RecordSet, cTypes.RecordFilter, error)
 		CreateComposeRecord(ctx context.Context, mod *cTypes.Module, rr ...*cTypes.Record) error
 		DeleteComposeRecord(ctx context.Context, m *cTypes.Module, rr ...*cTypes.Record) error
@@ -127,40 +139,135 @@ func (s seeder) DeleteAllUser() (err error) {
 	return
 }
 
+// LookupNamespaceByID will get namespace by ID
+func (s seeder) LookupNamespaceByID(ID uint64) (ns *cTypes.Namespace, err error) {
+	if ID == 0 {
+		err = fmt.Errorf("invalid ID for namespace")
+		return
+	}
+	ns, err = s.store.LookupComposeNamespaceByID(s.ctx, ID)
+	if err != nil {
+		return
+	}
+	if ns == nil {
+		return ns, fmt.Errorf("namespace not found")
+	}
+	return
+}
+
+// LookupNamespaceByHandle will get namespace by handle
+func (s seeder) LookupNamespaceByHandle(handle string) (ns *cTypes.Namespace, err error) {
+	if len(handle) == 0 {
+		err = fmt.Errorf("invalid handle for namespace")
+		return
+	}
+	ns, err = s.store.LookupComposeNamespaceBySlug(s.ctx, handle)
+	if err != nil {
+		return
+	}
+	if ns == nil {
+		return ns, fmt.Errorf("namespace not found")
+	}
+	return
+}
+
+// LookupModuleByID will get module by ID
 func (s seeder) LookupModuleByID(ID uint64) (mod *cTypes.Module, err error) {
 	if ID == 0 {
 		err = fmt.Errorf("invalid ID for module")
-		return nil, err
+		return
 	}
 	mod, err = s.store.LookupComposeModuleByID(s.ctx, ID)
 	if err != nil {
 		return
 	}
+	if mod == nil {
+		return mod, fmt.Errorf("module not found")
+	}
+	return
+}
+
+// LookupModuleByHandle will get module by handle
+func (s seeder) LookupModuleByHandle(nsID uint64, handle string) (mod *cTypes.Module, err error) {
+	if nsID == 0 {
+		err = fmt.Errorf("invalid namespace for module")
+		return nil, err
+	}
+	if len(handle) == 0 {
+		err = fmt.Errorf("invalid handle for module")
+		return
+	}
+	mod, err = s.store.LookupComposeModuleByNamespaceIDHandle(s.ctx, nsID, handle)
+	if err != nil {
+		return
+	}
+	if mod == nil {
+		return mod, fmt.Errorf("module not found")
+	}
+	return
+}
+
+// GetModuleFromParams will get module of namespace using params
+func (s seeder) GetModuleFromParams(params *RecordParams) (mod *cTypes.Module, err error) {
+	if params == nil {
+		return
+	}
+
+	var ns *cTypes.Namespace
+
+	if params.NamespaceID > 0 {
+		ns, err = s.LookupNamespaceByID(params.NamespaceID)
+		if err != nil {
+			return
+		}
+	}
+	if len(params.NamespaceHandle) > 0 {
+		ns, err = s.LookupNamespaceByHandle(params.NamespaceHandle)
+		if err != nil {
+			return
+		}
+	}
+
+	if params.ModuleID > 0 {
+		mod, err = s.LookupModuleByID(params.ModuleID)
+		if err != nil {
+			return
+		}
+	}
+	if len(params.ModuleHandle) > 0 {
+		mod, err = s.LookupModuleByHandle(ns.ID, params.ModuleHandle)
+		if err != nil {
+			return
+		}
+	}
+
+	if mod == nil {
+		return mod, fmt.Errorf("module not found")
+	}
 	return
 }
 
 // CreateRecord creates given no of record into DB
-func (s seeder) CreateRecord(moduleID uint64, params Params) (IDs []uint64, err error) {
-	var records []*cTypes.Record
-	var labels []*lTypes.Label
+func (s seeder) CreateRecord(params RecordParams) (IDs []uint64, err error) {
+	var (
+		records []*cTypes.Record
+		labels  []*lTypes.Label
+	)
 
-	mod, err := s.LookupModuleByID(moduleID)
-	if mod == nil {
-		return IDs, fmt.Errorf("module not found")
-	}
-
+	m, err := s.GetModuleFromParams(&params)
 	if err != nil {
-		return nil, err
+		return
 	}
+
 	for i := 0; i < params.getLimit(); i++ {
 		rec := &cTypes.Record{
 			ID:          id.Next(),
-			NamespaceID: mod.NamespaceID,
-			ModuleID:    mod.ID,
+			NamespaceID: m.NamespaceID,
+			ModuleID:    m.ID,
 			CreatedAt:   time.Now(),
 		}
 
-		for i, f := range mod.Fields {
+		for i, f := range m.Fields {
 			err := s.setRecordValues(rec, uint(i), f)
 			if err != nil {
 				return nil, err
@@ -175,7 +282,7 @@ func (s seeder) CreateRecord(moduleID uint64, params Params) (IDs []uint64, err 
 		))
 	}
 
-	err = s.store.CreateComposeRecord(s.ctx, mod, records...)
+	err = s.store.CreateComposeRecord(s.ctx, m, records...)
 	if err != nil {
 		return
 	}
@@ -253,15 +360,20 @@ func (s seeder) DeleteAllRecord(mod *cTypes.Module) (err error) {
 }
 
 // DeleteAll will delete all the fake data from the DB
-func (s seeder) DeleteAll(mod *cTypes.Module) (err error) {
+func (s seeder) DeleteAll(params *RecordParams) (err error) {
 	err = s.DeleteAllUser()
 	if err != nil {
 		return
 	}
 
-	err = s.DeleteAllRecord(mod)
-	if err != nil {
-		return err
+	if params != nil {
+		m, err := s.GetModuleFromParams(params)
+		if err != nil {
+			err = s.DeleteAllRecord(m)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	return

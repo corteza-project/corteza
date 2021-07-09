@@ -13,8 +13,8 @@ require (
 	github.com/PaesslerAG/jsonpath v0.1.1 // indirect
 	github.com/SentimensRG/ctx v0.0.0-20180729130232-0bfd988c655d
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+	github.com/brianvoe/gofakeit/v6 v6.5.0
 	github.com/crewjam/saml v0.4.5
-	github.com/chris-ramon/douceur v0.2.0 // indirect
 	github.com/crusttech/go-oidc v0.0.0-20180918092017-982855dad3e1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/deckarep/golang-set v1.7.1 // indirect

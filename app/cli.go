@@ -10,6 +10,7 @@ import (
 	"github.com/cortezaproject/corteza-server/pkg/logger"
 	"github.com/cortezaproject/corteza-server/pkg/options"
 	"github.com/cortezaproject/corteza-server/pkg/rbac"
+	fakerCommands "github.com/cortezaproject/corteza-server/seeder/commands"
 	"github.com/cortezaproject/corteza-server/store"
 	systemCommands "github.com/cortezaproject/corteza-server/system/commands"
 )
@@ -95,6 +96,7 @@ func (app *CortezaApp) InitCLI() {
 		federationCommands.Sync(ctx, app),
 		cli.EnvCommand(),
 		cli.VersionCommand(),
+		fakerCommands.Seeder(ctx, app),
 	)
 
 }

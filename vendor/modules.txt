@@ -38,6 +38,12 @@ github.com/aymerick/douceur/parser
 github.com/beevik/etree
 # github.com/beorn7/perks v1.0.0
 github.com/beorn7/perks/quantile
+# github.com/brianvoe/gofakeit v3.18.0+incompatible
+## explicit
+# github.com/brianvoe/gofakeit/v6 v6.5.0
+## explicit
+github.com/brianvoe/gofakeit/v6
+github.com/brianvoe/gofakeit/v6/data
 # github.com/cespare/xxhash/v2 v2.1.1
 github.com/cespare/xxhash/v2
 # github.com/chris-ramon/douceur v0.2.0

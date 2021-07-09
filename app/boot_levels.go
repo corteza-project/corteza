@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/cortezaproject/corteza-server/seeder"
 	"strings"
 
 	authService "github.com/cortezaproject/corteza-server/auth"
@@ -406,6 +407,9 @@ func (app *CortezaApp) InitServices(ctx context.Context) (err error) {
 			return
 		}
 	}
+
+	// Initializing seeder
+	_ = seeder.Seeder(ctx, app.Store, seeder.Faker())
 
 	app.lvl = bootLevelServicesInitialized
 	return

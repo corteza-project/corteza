@@ -179,12 +179,12 @@ func TestClearUsers(t *testing.T) {
 	h := newHelper(t)
 	h.clearUsers()
 
-	totalFakeRecord := 10
+	limit := 10
 	gen := DataGen(h.ctx, DefaultStore, Faker())
 
-	userIDs, err := gen.MakeMeSomeFakeUserPlease(GenOption{totalFakeRecord})
+	userIDs, err := gen.MakeMeSomeFakeUserPlease(GenOption{limit})
 	h.noError(err)
-	h.a.NotEqual(totalFakeRecord, len(userIDs))
+	h.a.NotEqual(limit, len(userIDs))
 
 	err = gen.ClearFakeUsers()
 	h.noError(err)
@@ -203,11 +203,12 @@ func TestMakeMeSomeFakeRecordPlease(t *testing.T) {
 		setModuleField("String", "str1", true),
 	)
 
+	limit := 10
 	gen := DataGen(h.ctx, DefaultStore, Faker())
 
-	rec, err := gen.MakeMeSomeFakeRecordPlease(m)
+	recIDs, err := gen.MakeMeSomeFakeRecordPlease(m, GenOption{limit})
 	h.noError(err)
-	h.a.NotNil(rec)
+	h.a.NotEqual(limit, len(recIDs))
 }
 
 func setModuleField(kind, name string, required bool) *types.ModuleField {

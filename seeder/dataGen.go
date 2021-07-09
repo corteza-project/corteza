@@ -131,27 +131,44 @@ func (gen dataGen) ClearFakeUsers() (err error) {
 }
 
 // MakeMeSomeFakeRecordPlease creates given no of record into DB
-func (gen dataGen) MakeMeSomeFakeRecordPlease(mod *cTypes.Module) (*cTypes.Record, error) {
-	rec := &cTypes.Record{
-		ID:          id.Next(),
-		NamespaceID: mod.NamespaceID,
-		ModuleID:    mod.ID,
-		CreatedAt:   time.Now(),
-	}
+func (gen dataGen) MakeMeSomeFakeRecordPlease(mod *cTypes.Module, opt GenOption) (IDs []uint64, err error) {
+	var records []*cTypes.Record
+	var labels []*lTypes.Label
 
-	for i, f := range mod.Fields {
-		err := gen.doTheFakeDataMagic(rec, uint(i), f)
-		if err != nil {
-			return nil, err
+	for i := 0; i < opt.getLimit(); i++ {
+		rec := &cTypes.Record{
+			ID:          id.Next(),
+			NamespaceID: mod.NamespaceID,
+			ModuleID:    mod.ID,
+			CreatedAt:   time.Now(),
 		}
+
+		for i, f := range mod.Fields {
+			err := gen.doTheFakeDataMagic(rec, uint(i), f)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		records = append(records, rec)
+		labels = append(labels, gen.MakeMeFakeDataLabel(
+			rec.ID,
+			rec.LabelResourceKind(),
+			fakeRecordLabelName,
+		))
 	}
 
-	err := gen.store.CreateComposeRecord(gen.ctx, mod, rec)
+	err = gen.store.CreateComposeRecord(gen.ctx, mod, records...)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return rec, nil
+	err = gen.store.UpsertLabel(gen.ctx, labels...)
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 // ClearFakeRecords clear all the fake user from DB
@@ -207,8 +224,6 @@ func (gen dataGen) doTheFakeDataMagic(rec *cTypes.Record, place uint, field *cTy
 	} else {
 		return fmt.Errorf("unknown kind for field")
 	}
-
-	field.Label = fakeDataLabel
 
 	rec.Values = rec.Values.Set(&cTypes.RecordValue{
 		RecordID: rec.ID,

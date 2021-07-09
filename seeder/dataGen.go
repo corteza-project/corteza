@@ -21,8 +21,6 @@ type (
 		// (optional) no record to be generate; Default value will be 1
 		Limit int
 	}
-	userGenOption struct {
-	}
 
 	fakerService interface {
 		fakeValueByName(name string) (val string, ok bool)

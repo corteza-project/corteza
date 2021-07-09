@@ -200,7 +200,9 @@ func TestMakeMeSomeFakeRecordPlease(t *testing.T) {
 	n := h.makeNamespace("fake-data-namespace")
 	m := h.makeModule(n, "fake-data-module",
 		setModuleField("String", "str1", true),
-		setModuleField("String", "str1", true),
+		setModuleField("String", "str2", false),
+		setModuleField("Number", "number1", true),
+		setModuleField("DateTime", "dt1", true),
 	)
 
 	limit := 10

@@ -50,6 +50,7 @@ func (r *registry) All() (list functionMetaList) {
 func (r *registry) Preload() {
 	r.Add("verifierQueryParam", NewVerifierQueryParam())
 	r.Add("verifierOrigin", NewVerifierOrigin())
+	r.Add("validatorHeader", NewValidatorHeader())
 	r.Add("expediterRedirection", NewExpediterRedirection())
 	r.Add("processerWorkflow", NewProcesserWorkflow(NewWorkflow()))
 }

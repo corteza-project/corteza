@@ -6,7 +6,7 @@ import (
 	"github.com/cortezaproject/corteza-server/system/types"
 )
 
-func (s Store) convertApigwRouteFilter(f types.RouteFilter) (query squirrel.SelectBuilder, err error) {
+func (s Store) convertApigwRouteFilter(f types.ApigwRouteFilter) (query squirrel.SelectBuilder, err error) {
 	query = s.apigwRoutesSelectBuilder()
 	query = filter.StateCondition(query, "ar.deleted_at", f.Deleted)
 	return

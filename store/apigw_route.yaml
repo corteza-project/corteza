@@ -3,8 +3,8 @@ import:
 
 types:
   package: types
-  type: types.Route
-  filterType: types.RouteFilter
+  type: types.ApigwRoute
+  filterType: types.ApigwRouteFilter
 
 fields:
   - { field: ID,        sortable: false }

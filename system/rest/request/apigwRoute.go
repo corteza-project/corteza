@@ -34,11 +34,11 @@ var (
 
 type (
 	// Internal API interface
-	RouteList struct {
+	ApigwRouteList struct {
 		// RouteID GET parameter
 		//
 		// Filter by route ID
-		RouteID []string
+		RouteID []uint64
 
 		// Query GET parameter
 		//
@@ -76,7 +76,7 @@ type (
 		Sort string
 	}
 
-	RouteCreate struct {
+	ApigwRouteCreate struct {
 		// Endpoint POST parameter
 		//
 		// Route endpoint
@@ -103,7 +103,7 @@ type (
 		Group uint64 `json:",string"`
 	}
 
-	RouteUpdate struct {
+	ApigwRouteUpdate struct {
 		// RouteID PATH parameter
 		//
 		// Route ID
@@ -135,21 +135,21 @@ type (
 		Group uint64 `json:",string"`
 	}
 
-	RouteRead struct {
+	ApigwRouteRead struct {
 		// RouteID PATH parameter
 		//
 		// Route ID
 		RouteID uint64 `json:",string"`
 	}
 
-	RouteDelete struct {
+	ApigwRouteDelete struct {
 		// RouteID PATH parameter
 		//
 		// Route ID
 		RouteID uint64 `json:",string"`
 	}
 
-	RouteUndelete struct {
+	ApigwRouteUndelete struct {
 		// RouteID PATH parameter
 		//
 		// Route ID
@@ -157,13 +157,13 @@ type (
 	}
 )
 
-// NewRouteList request
-func NewRouteList() *RouteList {
-	return &RouteList{}
+// NewApigwRouteList request
+func NewApigwRouteList() *ApigwRouteList {
+	return &ApigwRouteList{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) Auditable() map[string]interface{} {
+func (r ApigwRouteList) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"routeID":    r.RouteID,
 		"query":      r.Query,
@@ -177,59 +177,59 @@ func (r RouteList) Auditable() map[string]interface{} {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetRouteID() []string {
+func (r ApigwRouteList) GetRouteID() []uint64 {
 	return r.RouteID
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetQuery() string {
+func (r ApigwRouteList) GetQuery() string {
 	return r.Query
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetDeleted() uint64 {
+func (r ApigwRouteList) GetDeleted() uint64 {
 	return r.Deleted
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetDisabled() uint64 {
+func (r ApigwRouteList) GetDisabled() uint64 {
 	return r.Disabled
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetLabels() map[string]string {
+func (r ApigwRouteList) GetLabels() map[string]string {
 	return r.Labels
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetLimit() uint {
+func (r ApigwRouteList) GetLimit() uint {
 	return r.Limit
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetPageCursor() string {
+func (r ApigwRouteList) GetPageCursor() string {
 	return r.PageCursor
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteList) GetSort() string {
+func (r ApigwRouteList) GetSort() string {
 	return r.Sort
 }
 
 // Fill processes request and fills internal variables
-func (r *RouteList) Fill(req *http.Request) (err error) {
+func (r *ApigwRouteList) Fill(req *http.Request) (err error) {
 
 	{
 		// GET params
 		tmp := req.URL.Query()
 
 		if val, ok := tmp["routeID[]"]; ok {
-			r.RouteID, err = val, nil
+			r.RouteID, err = payload.ParseUint64s(val), nil
 			if err != nil {
 				return err
 			}
 		} else if val, ok := tmp["routeID"]; ok {
-			r.RouteID, err = val, nil
+			r.RouteID, err = payload.ParseUint64s(val), nil
 			if err != nil {
 				return err
 			}
@@ -286,13 +286,13 @@ func (r *RouteList) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewRouteCreate request
-func NewRouteCreate() *RouteCreate {
-	return &RouteCreate{}
+// NewApigwRouteCreate request
+func NewApigwRouteCreate() *ApigwRouteCreate {
+	return &ApigwRouteCreate{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteCreate) Auditable() map[string]interface{} {
+func (r ApigwRouteCreate) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"endpoint": r.Endpoint,
 		"method":   r.Method,
@@ -303,32 +303,32 @@ func (r RouteCreate) Auditable() map[string]interface{} {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteCreate) GetEndpoint() string {
+func (r ApigwRouteCreate) GetEndpoint() string {
 	return r.Endpoint
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteCreate) GetMethod() string {
+func (r ApigwRouteCreate) GetMethod() string {
 	return r.Method
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteCreate) GetDebug() bool {
+func (r ApigwRouteCreate) GetDebug() bool {
 	return r.Debug
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteCreate) GetEnabled() bool {
+func (r ApigwRouteCreate) GetEnabled() bool {
 	return r.Enabled
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteCreate) GetGroup() uint64 {
+func (r ApigwRouteCreate) GetGroup() uint64 {
 	return r.Group
 }
 
 // Fill processes request and fills internal variables
-func (r *RouteCreate) Fill(req *http.Request) (err error) {
+func (r *ApigwRouteCreate) Fill(req *http.Request) (err error) {
 
 	if strings.ToLower(req.Header.Get("content-type")) == "application/json" {
 		err = json.NewDecoder(req.Body).Decode(r)
@@ -387,13 +387,13 @@ func (r *RouteCreate) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewRouteUpdate request
-func NewRouteUpdate() *RouteUpdate {
-	return &RouteUpdate{}
+// NewApigwRouteUpdate request
+func NewApigwRouteUpdate() *ApigwRouteUpdate {
+	return &ApigwRouteUpdate{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) Auditable() map[string]interface{} {
+func (r ApigwRouteUpdate) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"routeID":  r.RouteID,
 		"endpoint": r.Endpoint,
@@ -405,37 +405,37 @@ func (r RouteUpdate) Auditable() map[string]interface{} {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) GetRouteID() uint64 {
+func (r ApigwRouteUpdate) GetRouteID() uint64 {
 	return r.RouteID
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) GetEndpoint() string {
+func (r ApigwRouteUpdate) GetEndpoint() string {
 	return r.Endpoint
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) GetMethod() string {
+func (r ApigwRouteUpdate) GetMethod() string {
 	return r.Method
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) GetDebug() bool {
+func (r ApigwRouteUpdate) GetDebug() bool {
 	return r.Debug
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) GetEnabled() bool {
+func (r ApigwRouteUpdate) GetEnabled() bool {
 	return r.Enabled
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUpdate) GetGroup() uint64 {
+func (r ApigwRouteUpdate) GetGroup() uint64 {
 	return r.Group
 }
 
 // Fill processes request and fills internal variables
-func (r *RouteUpdate) Fill(req *http.Request) (err error) {
+func (r *ApigwRouteUpdate) Fill(req *http.Request) (err error) {
 
 	if strings.ToLower(req.Header.Get("content-type")) == "application/json" {
 		err = json.NewDecoder(req.Body).Decode(r)
@@ -506,25 +506,25 @@ func (r *RouteUpdate) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewRouteRead request
-func NewRouteRead() *RouteRead {
-	return &RouteRead{}
+// NewApigwRouteRead request
+func NewApigwRouteRead() *ApigwRouteRead {
+	return &ApigwRouteRead{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteRead) Auditable() map[string]interface{} {
+func (r ApigwRouteRead) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"routeID": r.RouteID,
 	}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteRead) GetRouteID() uint64 {
+func (r ApigwRouteRead) GetRouteID() uint64 {
 	return r.RouteID
 }
 
 // Fill processes request and fills internal variables
-func (r *RouteRead) Fill(req *http.Request) (err error) {
+func (r *ApigwRouteRead) Fill(req *http.Request) (err error) {
 
 	{
 		var val string
@@ -541,25 +541,25 @@ func (r *RouteRead) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewRouteDelete request
-func NewRouteDelete() *RouteDelete {
-	return &RouteDelete{}
+// NewApigwRouteDelete request
+func NewApigwRouteDelete() *ApigwRouteDelete {
+	return &ApigwRouteDelete{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteDelete) Auditable() map[string]interface{} {
+func (r ApigwRouteDelete) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"routeID": r.RouteID,
 	}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteDelete) GetRouteID() uint64 {
+func (r ApigwRouteDelete) GetRouteID() uint64 {
 	return r.RouteID
 }
 
 // Fill processes request and fills internal variables
-func (r *RouteDelete) Fill(req *http.Request) (err error) {
+func (r *ApigwRouteDelete) Fill(req *http.Request) (err error) {
 
 	{
 		var val string
@@ -576,25 +576,25 @@ func (r *RouteDelete) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewRouteUndelete request
-func NewRouteUndelete() *RouteUndelete {
-	return &RouteUndelete{}
+// NewApigwRouteUndelete request
+func NewApigwRouteUndelete() *ApigwRouteUndelete {
+	return &ApigwRouteUndelete{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUndelete) Auditable() map[string]interface{} {
+func (r ApigwRouteUndelete) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"routeID": r.RouteID,
 	}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r RouteUndelete) GetRouteID() uint64 {
+func (r ApigwRouteUndelete) GetRouteID() uint64 {
 	return r.RouteID
 }
 
 // Fill processes request and fills internal variables
-func (r *RouteUndelete) Fill(req *http.Request) (err error) {
+func (r *ApigwRouteUndelete) Fill(req *http.Request) (err error) {
 
 	{
 		var val string

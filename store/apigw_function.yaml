@@ -3,8 +3,8 @@ import:
 
 types:
   package: types
-  type: types.Function
-  filterType: types.FunctionFilter
+  type: types.ApigwFunction
+  filterType: types.ApigwFunctionFilter
 
 fields:
   - { field: ID,        sortable: false }

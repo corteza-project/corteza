@@ -7,15 +7,13 @@ import (
 )
 
 type (
-	RouteMeta struct{}
-
-	Route struct {
+	ApigwRoute struct {
 		ID       uint64 `json:"routeID,string"`
 		Endpoint string `json:"endpoint"`
 		Method   string `json:"method"`
 		Debug    bool   `json:"debug"`
 		Enabled  bool   `json:"enabled"`
-		Group    uint64 `json:"group"`
+		Group    uint64 `json:"group,string"`
 
 		CreatedAt time.Time  `json:"createdAt,omitempty"`
 		CreatedBy uint64     `json:"createdBy,string" `
@@ -25,7 +23,7 @@ type (
 		DeletedBy uint64     `json:"deletedBy,string,omitempty" `
 	}
 
-	RouteFilter struct {
+	ApigwRouteFilter struct {
 		Route   string `json:"route"`
 		Group   string `json:"group"`
 		Enabled bool   `json:"enabled"`
@@ -36,7 +34,7 @@ type (
 		// modify the resource and return false if store should not return it
 		//
 		// Store then loads additional resources to satisfy the paging parameters
-		Check func(*Route) (bool, error) `json:"-"`
+		Check func(*ApigwRoute) (bool, error) `json:"-"`
 
 		filter.Sorting
 		filter.Paging

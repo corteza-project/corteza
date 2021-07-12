@@ -21,5 +21,5 @@ types:
     noIdField: true
   Template:
     labelResourceType: template
-  Route: {}
-  Function: {}
+  ApigwRoute: {}
+  ApigwFunction: {}

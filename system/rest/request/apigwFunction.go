@@ -34,16 +34,11 @@ var (
 
 type (
 	// Internal API interface
-	FunctionList struct {
-		// FunctionID GET parameter
-		//
-		// Filter by function ID
-		FunctionID []string
-
+	ApigwFunctionList struct {
 		// RouteID GET parameter
 		//
 		// Filter by route ID
-		RouteID string
+		RouteID uint64 `json:",string"`
 
 		// Query GET parameter
 		//
@@ -76,7 +71,7 @@ type (
 		Sort string
 	}
 
-	FunctionCreate struct {
+	ApigwFunctionCreate struct {
 		// RouteID POST parameter
 		//
 		// Route
@@ -100,10 +95,10 @@ type (
 		// Params POST parameter
 		//
 		// Function parameters
-		Params types.FuncParams
+		Params types.ApigwFuncParams
 	}
 
-	FunctionUpdate struct {
+	ApigwFunctionUpdate struct {
 		// FunctionID PATH parameter
 		//
 		// Function ID
@@ -132,31 +127,31 @@ type (
 		// Params POST parameter
 		//
 		// Function parameters
-		Params types.FuncParams
+		Params types.ApigwFuncParams
 	}
 
-	FunctionRead struct {
+	ApigwFunctionRead struct {
 		// FunctionID PATH parameter
 		//
 		// Function ID
 		FunctionID uint64 `json:",string"`
 	}
 
-	FunctionDelete struct {
+	ApigwFunctionDelete struct {
 		// FunctionID PATH parameter
 		//
 		// Function ID
 		FunctionID uint64 `json:",string"`
 	}
 
-	FunctionUndelete struct {
+	ApigwFunctionUndelete struct {
 		// FunctionID PATH parameter
 		//
 		// Function ID
 		FunctionID uint64 `json:",string"`
 	}
 
-	FunctionDefinitions struct {
+	ApigwFunctionDefinitions struct {
 		// Kind GET parameter
 		//
 		// Filter functions by kind
@@ -164,15 +159,14 @@ type (
 	}
 )
 
-// NewFunctionList request
-func NewFunctionList() *FunctionList {
-	return &FunctionList{}
+// NewApigwFunctionList request
+func NewApigwFunctionList() *ApigwFunctionList {
+	return &ApigwFunctionList{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) Auditable() map[string]interface{} {
+func (r ApigwFunctionList) Auditable() map[string]interface{} {
 	return map[string]interface{}{
-		"functionID": r.FunctionID,
 		"routeID":    r.RouteID,
 		"query":      r.Query,
 		"deleted":    r.Deleted,
@@ -184,65 +178,49 @@ func (r FunctionList) Auditable() map[string]interface{} {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetFunctionID() []string {
-	return r.FunctionID
-}
-
-// Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetRouteID() string {
+func (r ApigwFunctionList) GetRouteID() uint64 {
 	return r.RouteID
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetQuery() string {
+func (r ApigwFunctionList) GetQuery() string {
 	return r.Query
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetDeleted() uint64 {
+func (r ApigwFunctionList) GetDeleted() uint64 {
 	return r.Deleted
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetDisabled() uint64 {
+func (r ApigwFunctionList) GetDisabled() uint64 {
 	return r.Disabled
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetLimit() uint {
+func (r ApigwFunctionList) GetLimit() uint {
 	return r.Limit
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetPageCursor() string {
+func (r ApigwFunctionList) GetPageCursor() string {
 	return r.PageCursor
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionList) GetSort() string {
+func (r ApigwFunctionList) GetSort() string {
 	return r.Sort
 }
 
 // Fill processes request and fills internal variables
-func (r *FunctionList) Fill(req *http.Request) (err error) {
+func (r *ApigwFunctionList) Fill(req *http.Request) (err error) {
 
 	{
 		// GET params
 		tmp := req.URL.Query()
 
-		if val, ok := tmp["functionID[]"]; ok {
-			r.FunctionID, err = val, nil
-			if err != nil {
-				return err
-			}
-		} else if val, ok := tmp["functionID"]; ok {
-			r.FunctionID, err = val, nil
-			if err != nil {
-				return err
-			}
-		}
 		if val, ok := tmp["routeID"]; ok && len(val) > 0 {
-			r.RouteID, err = val[0], nil
+			r.RouteID, err = payload.ParseUint64(val[0]), nil
 			if err != nil {
 				return err
 			}
@@ -288,13 +266,13 @@ func (r *FunctionList) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewFunctionCreate request
-func NewFunctionCreate() *FunctionCreate {
-	return &FunctionCreate{}
+// NewApigwFunctionCreate request
+func NewApigwFunctionCreate() *ApigwFunctionCreate {
+	return &ApigwFunctionCreate{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionCreate) Auditable() map[string]interface{} {
+func (r ApigwFunctionCreate) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"routeID": r.RouteID,
 		"weight":  r.Weight,
@@ -305,32 +283,32 @@ func (r FunctionCreate) Auditable() map[string]interface{} {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionCreate) GetRouteID() uint64 {
+func (r ApigwFunctionCreate) GetRouteID() uint64 {
 	return r.RouteID
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionCreate) GetWeight() uint64 {
+func (r ApigwFunctionCreate) GetWeight() uint64 {
 	return r.Weight
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionCreate) GetKind() types.ApigwFunctionKind {
+func (r ApigwFunctionCreate) GetKind() types.ApigwFunctionKind {
 	return r.Kind
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionCreate) GetRef() string {
+func (r ApigwFunctionCreate) GetRef() string {
 	return r.Ref
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionCreate) GetParams() types.FuncParams {
+func (r ApigwFunctionCreate) GetParams() types.ApigwFuncParams {
 	return r.Params
 }
 
 // Fill processes request and fills internal variables
-func (r *FunctionCreate) Fill(req *http.Request) (err error) {
+func (r *ApigwFunctionCreate) Fill(req *http.Request) (err error) {
 
 	if strings.ToLower(req.Header.Get("content-type")) == "application/json" {
 		err = json.NewDecoder(req.Body).Decode(r)
@@ -394,13 +372,13 @@ func (r *FunctionCreate) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewFunctionUpdate request
-func NewFunctionUpdate() *FunctionUpdate {
-	return &FunctionUpdate{}
+// NewApigwFunctionUpdate request
+func NewApigwFunctionUpdate() *ApigwFunctionUpdate {
+	return &ApigwFunctionUpdate{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUpdate) Auditable() map[string]interface{} {
+func (r ApigwFunctionUpdate) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"functionID": r.FunctionID,
 		"routeID":    r.RouteID,
@@ -412,37 +390,37 @@ func (r FunctionUpdate) Auditable() map[string]interface{} {
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUpdate) GetFunctionID() uint64 {
+func (r ApigwFunctionUpdate) GetFunctionID() uint64 {
 	return r.FunctionID
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUpdate) GetRouteID() uint64 {
+func (r ApigwFunctionUpdate) GetRouteID() uint64 {
 	return r.RouteID
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUpdate) GetWeight() uint64 {
+func (r ApigwFunctionUpdate) GetWeight() uint64 {
 	return r.Weight
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUpdate) GetKind() types.ApigwFunctionKind {
+func (r ApigwFunctionUpdate) GetKind() types.ApigwFunctionKind {
 	return r.Kind
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUpdate) GetRef() string {
+func (r ApigwFunctionUpdate) GetRef() string {
 	return r.Ref
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUpdate) GetParams() types.FuncParams {
+func (r ApigwFunctionUpdate) GetParams() types.ApigwFuncParams {
 	return r.Params
 }
 
 // Fill processes request and fills internal variables
-func (r *FunctionUpdate) Fill(req *http.Request) (err error) {
+func (r *ApigwFunctionUpdate) Fill(req *http.Request) (err error) {
 
 	if strings.ToLower(req.Header.Get("content-type")) == "application/json" {
 		err = json.NewDecoder(req.Body).Decode(r)
@@ -518,25 +496,25 @@ func (r *FunctionUpdate) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewFunctionRead request
-func NewFunctionRead() *FunctionRead {
-	return &FunctionRead{}
+// NewApigwFunctionRead request
+func NewApigwFunctionRead() *ApigwFunctionRead {
+	return &ApigwFunctionRead{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionRead) Auditable() map[string]interface{} {
+func (r ApigwFunctionRead) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"functionID": r.FunctionID,
 	}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionRead) GetFunctionID() uint64 {
+func (r ApigwFunctionRead) GetFunctionID() uint64 {
 	return r.FunctionID
 }
 
 // Fill processes request and fills internal variables
-func (r *FunctionRead) Fill(req *http.Request) (err error) {
+func (r *ApigwFunctionRead) Fill(req *http.Request) (err error) {
 
 	{
 		var val string
@@ -553,25 +531,25 @@ func (r *FunctionRead) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewFunctionDelete request
-func NewFunctionDelete() *FunctionDelete {
-	return &FunctionDelete{}
+// NewApigwFunctionDelete request
+func NewApigwFunctionDelete() *ApigwFunctionDelete {
+	return &ApigwFunctionDelete{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionDelete) Auditable() map[string]interface{} {
+func (r ApigwFunctionDelete) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"functionID": r.FunctionID,
 	}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionDelete) GetFunctionID() uint64 {
+func (r ApigwFunctionDelete) GetFunctionID() uint64 {
 	return r.FunctionID
 }
 
 // Fill processes request and fills internal variables
-func (r *FunctionDelete) Fill(req *http.Request) (err error) {
+func (r *ApigwFunctionDelete) Fill(req *http.Request) (err error) {
 
 	{
 		var val string
@@ -588,25 +566,25 @@ func (r *FunctionDelete) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewFunctionUndelete request
-func NewFunctionUndelete() *FunctionUndelete {
-	return &FunctionUndelete{}
+// NewApigwFunctionUndelete request
+func NewApigwFunctionUndelete() *ApigwFunctionUndelete {
+	return &ApigwFunctionUndelete{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUndelete) Auditable() map[string]interface{} {
+func (r ApigwFunctionUndelete) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"functionID": r.FunctionID,
 	}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionUndelete) GetFunctionID() uint64 {
+func (r ApigwFunctionUndelete) GetFunctionID() uint64 {
 	return r.FunctionID
 }
 
 // Fill processes request and fills internal variables
-func (r *FunctionUndelete) Fill(req *http.Request) (err error) {
+func (r *ApigwFunctionUndelete) Fill(req *http.Request) (err error) {
 
 	{
 		var val string
@@ -623,25 +601,25 @@ func (r *FunctionUndelete) Fill(req *http.Request) (err error) {
 	return err
 }
 
-// NewFunctionDefinitions request
-func NewFunctionDefinitions() *FunctionDefinitions {
-	return &FunctionDefinitions{}
+// NewApigwFunctionDefinitions request
+func NewApigwFunctionDefinitions() *ApigwFunctionDefinitions {
+	return &ApigwFunctionDefinitions{}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionDefinitions) Auditable() map[string]interface{} {
+func (r ApigwFunctionDefinitions) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"kind": r.Kind,
 	}
 }
 
 // Auditable returns all auditable/loggable parameters
-func (r FunctionDefinitions) GetKind() string {
+func (r ApigwFunctionDefinitions) GetKind() string {
 	return r.Kind
 }
 
 // Fill processes request and fills internal variables
-func (r *FunctionDefinitions) Fill(req *http.Request) (err error) {
+func (r *ApigwFunctionDefinitions) Fill(req *http.Request) (err error) {
 
 	{
 		// GET params

@@ -6,7 +6,7 @@ package service
 // the code is regenerated.
 //
 // Definitions file that controls how this file is generated:
-// system/service/function_actions.yaml
+// system/service/apigw_function_actions.yaml
 
 import (
 	"context"
@@ -20,8 +20,8 @@ import (
 
 type (
 	functionActionProps struct {
-		function *types.Function
-		search   *types.FunctionFilter
+		function *types.ApigwFunction
+		search   *types.ApigwFunctionFilter
 	}
 
 	functionAction struct {
@@ -55,7 +55,7 @@ var (
 //
 // This function is auto-generated.
 //
-func (p *functionActionProps) setFunction(function *types.Function) *functionActionProps {
+func (p *functionActionProps) setFunction(function *types.ApigwFunction) *functionActionProps {
 	p.function = function
 	return p
 }
@@ -66,7 +66,7 @@ func (p *functionActionProps) setFunction(function *types.Function) *functionAct
 //
 // This function is auto-generated.
 //
-func (p *functionActionProps) setSearch(search *types.FunctionFilter) *functionActionProps {
+func (p *functionActionProps) setSearch(search *types.ApigwFunctionFilter) *functionActionProps {
 	p.search = search
 	return p
 }

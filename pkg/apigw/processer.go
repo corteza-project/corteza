@@ -25,7 +25,7 @@ func NewProcesserWorkflow(wf WfExecer) processerWorkflow {
 	}
 }
 
-func (h processerWorkflow) Meta(f *types.Function) functionMeta {
+func (h processerWorkflow) Meta(f *types.ApigwFunction) functionMeta {
 	return functionMeta{
 		Step:   2,
 		Name:   "processerWorkflow",

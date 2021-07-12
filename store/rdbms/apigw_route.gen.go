@@ -24,11 +24,11 @@ var _ = errors.Is
 // SearchApigwRoutes returns all matching rows
 //
 // This function calls convertApigwRouteFilter with the given
-// types.RouteFilter and expects to receive a working squirrel.SelectBuilder
-func (s Store) SearchApigwRoutes(ctx context.Context, f types.RouteFilter) (types.RouteSet, types.RouteFilter, error) {
+// types.ApigwRouteFilter and expects to receive a working squirrel.SelectBuilder
+func (s Store) SearchApigwRoutes(ctx context.Context, f types.ApigwRouteFilter) (types.ApigwRouteSet, types.ApigwRouteFilter, error) {
 	var (
 		err error
-		set []*types.Route
+		set []*types.ApigwRoute
 		q   squirrel.SelectBuilder
 	)
 
@@ -112,11 +112,11 @@ func (s Store) fetchFullPageOfApigwRoutes(
 	sort filter.SortExprSet,
 	cursor *filter.PagingCursor,
 	reqItems uint,
-	check func(*types.Route) (bool, error),
+	check func(*types.ApigwRoute) (bool, error),
 	cursorCond func(*filter.PagingCursor) squirrel.Sqlizer,
-) (set []*types.Route, prev, next *filter.PagingCursor, err error) {
+) (set []*types.ApigwRoute, prev, next *filter.PagingCursor, err error) {
 	var (
-		aux []*types.Route
+		aux []*types.ApigwRoute
 
 		// When cursor for a previous page is used it's marked as reversed
 		// This tells us to flip the descending flag on all used sort keys
@@ -137,7 +137,7 @@ func (s Store) fetchFullPageOfApigwRoutes(
 		hasNext bool
 	)
 
-	set = make([]*types.Route, 0, DefaultSliceCapacity)
+	set = make([]*types.ApigwRoute, 0, DefaultSliceCapacity)
 
 	for try := 0; try < MaxRefetches; try++ {
 		if cursor != nil {
@@ -235,12 +235,12 @@ func (s Store) fetchFullPageOfApigwRoutes(
 func (s Store) QueryApigwRoutes(
 	ctx context.Context,
 	q squirrel.Sqlizer,
-	check func(*types.Route) (bool, error),
-) ([]*types.Route, error) {
+	check func(*types.ApigwRoute) (bool, error),
+) ([]*types.ApigwRoute, error) {
 	var (
-		tmp = make([]*types.Route, 0, DefaultSliceCapacity)
-		set = make([]*types.Route, 0, DefaultSliceCapacity)
-		res *types.Route
+		tmp = make([]*types.ApigwRoute, 0, DefaultSliceCapacity)
+		set = make([]*types.ApigwRoute, 0, DefaultSliceCapacity)
+		res *types.ApigwRoute
 
 		// Query rows with
 		rows, err = s.Query(ctx, q)
@@ -272,21 +272,21 @@ func (s Store) QueryApigwRoutes(
 }
 
 // LookupApigwRouteByID searches for route by ID
-func (s Store) LookupApigwRouteByID(ctx context.Context, id uint64) (*types.Route, error) {
+func (s Store) LookupApigwRouteByID(ctx context.Context, id uint64) (*types.ApigwRoute, error) {
 	return s.execLookupApigwRoute(ctx, squirrel.Eq{
 		s.preprocessColumn("ar.id", ""): store.PreprocessValue(id, ""),
 	})
 }
 
 // LookupApigwRouteByEndpoint searches for route by endpoint
-func (s Store) LookupApigwRouteByEndpoint(ctx context.Context, endpoint string) (*types.Route, error) {
+func (s Store) LookupApigwRouteByEndpoint(ctx context.Context, endpoint string) (*types.ApigwRoute, error) {
 	return s.execLookupApigwRoute(ctx, squirrel.Eq{
 		s.preprocessColumn("ar.endpoint", ""): store.PreprocessValue(endpoint, ""),
 	})
 }
 
 // CreateApigwRoute creates one or more rows in apigw_routes table
-func (s Store) CreateApigwRoute(ctx context.Context, rr ...*types.Route) (err error) {
+func (s Store) CreateApigwRoute(ctx context.Context, rr ...*types.ApigwRoute) (err error) {
 	for _, res := range rr {
 		err = s.checkApigwRouteConstraints(ctx, res)
 		if err != nil {
@@ -303,12 +303,12 @@ func (s Store) CreateApigwRoute(ctx context.Context, rr ...*types.Route) (err er
 }
 
 // UpdateApigwRoute updates one or more existing rows in apigw_routes
-func (s Store) UpdateApigwRoute(ctx context.Context, rr ...*types.Route) error {
+func (s Store) UpdateApigwRoute(ctx context.Context, rr ...*types.ApigwRoute) error {
 	return s.partialApigwRouteUpdate(ctx, nil, rr...)
 }
 
 // partialApigwRouteUpdate updates one or more existing rows in apigw_routes
-func (s Store) partialApigwRouteUpdate(ctx context.Context, onlyColumns []string, rr ...*types.Route) (err error) {
+func (s Store) partialApigwRouteUpdate(ctx context.Context, onlyColumns []string, rr ...*types.ApigwRoute) (err error) {
 	for _, res := range rr {
 		err = s.checkApigwRouteConstraints(ctx, res)
 		if err != nil {
@@ -330,7 +330,7 @@ func (s Store) partialApigwRouteUpdate(ctx context.Context, onlyColumns []string
 }
 
 // DeleteApigwRoute Deletes one or more rows from apigw_routes table
-func (s Store) DeleteApigwRoute(ctx context.Context, rr ...*types.Route) (err error) {
+func (s Store) DeleteApigwRoute(ctx context.Context, rr ...*types.ApigwRoute) (err error) {
 	for _, res := range rr {
 
 		err = s.execDeleteApigwRoutes(ctx, squirrel.Eq{
@@ -357,8 +357,8 @@ func (s Store) TruncateApigwRoutes(ctx context.Context) error {
 }
 
 // execLookupApigwRoute prepares ApigwRoute query and executes it,
-// returning types.Route (or error)
-func (s Store) execLookupApigwRoute(ctx context.Context, cnd squirrel.Sqlizer) (res *types.Route, err error) {
+// returning types.ApigwRoute (or error)
+func (s Store) execLookupApigwRoute(ctx context.Context, cnd squirrel.Sqlizer) (res *types.ApigwRoute, err error) {
 	var (
 		row rowScanner
 	)
@@ -391,11 +391,11 @@ func (s Store) execDeleteApigwRoutes(ctx context.Context, cnd squirrel.Sqlizer) 
 	return s.Exec(ctx, s.DeleteBuilder(s.apigwRouteTable("ar")).Where(cnd))
 }
 
-func (s Store) internalApigwRouteRowScanner(row rowScanner) (res *types.Route, err error) {
-	res = &types.Route{}
+func (s Store) internalApigwRouteRowScanner(row rowScanner) (res *types.ApigwRoute, err error) {
+	res = &types.ApigwRoute{}
 
 	if _, has := s.config.RowScanners["apigwRoute"]; has {
-		scanner := s.config.RowScanners["apigwRoute"].(func(_ rowScanner, _ *types.Route) error)
+		scanner := s.config.RowScanners["apigwRoute"].(func(_ rowScanner, _ *types.ApigwRoute) error)
 		err = scanner(row, res)
 	} else {
 		err = row.Scan(
@@ -476,11 +476,11 @@ func (Store) sortableApigwRouteColumns() map[string]string {
 	}
 }
 
-// internalApigwRouteEncoder encodes fields from types.Route to store.Payload (map)
+// internalApigwRouteEncoder encodes fields from types.ApigwRoute to store.Payload (map)
 //
 // Encoding is done by using generic approach or by calling encodeApigwRoute
 // func when rdbms.customEncoder=true
-func (s Store) internalApigwRouteEncoder(res *types.Route) store.Payload {
+func (s Store) internalApigwRouteEncoder(res *types.ApigwRoute) store.Payload {
 	return store.Payload{
 		"id":         res.ID,
 		"endpoint":   res.Endpoint,
@@ -506,7 +506,7 @@ func (s Store) internalApigwRouteEncoder(res *types.Route) store.Payload {
 // Known issue:
 //   when collecting cursor values for query that sorts by unique column with partial index (ie: unique handle on
 //   undeleted items)
-func (s Store) collectApigwRouteCursorValues(res *types.Route, cc ...*filter.SortExpr) *filter.PagingCursor {
+func (s Store) collectApigwRouteCursorValues(res *types.ApigwRoute, cc ...*filter.SortExpr) *filter.PagingCursor {
 	var (
 		cursor = &filter.PagingCursor{LThen: filter.SortExprSet(cc).Reversed()}
 
@@ -542,7 +542,7 @@ func (s Store) collectApigwRouteCursorValues(res *types.Route, cc ...*filter.Sor
 //
 // Using built-in constraint checking would be more performant but unfortunately we cannot rely
 // on the full support (MySQL does not support conditional indexes)
-func (s *Store) checkApigwRouteConstraints(ctx context.Context, res *types.Route) error {
+func (s *Store) checkApigwRouteConstraints(ctx context.Context, res *types.ApigwRoute) error {
 	// Consider resource valid when all fields in unique constraint check lookups
 	// have valid (non-empty) value
 	//

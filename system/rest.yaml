@@ -1508,7 +1508,7 @@ endpoints:
 
 - title: API Gateway routes
   path: "/apigw/route"
-  entrypoint: route
+  entrypoint: apigwRoute
   authentication: []
   imports:
     - github.com/cortezaproject/corteza-server/pkg/label
@@ -1519,7 +1519,7 @@ endpoints:
     path: "/"
     parameters:
       get:
-      - { name: routeID,    type: "[]string",          title: "Filter by route ID" }
+      - { name: routeID,    type: "[]uint64",          title: "Filter by route ID" }
       - { name: query,      type: "string",            title: "Filter routes" }
       - { name: deleted,    type: "uint64",            title: "Exclude (0, default), include (1) or return only (2) deleted routes" }
       - { name: disabled,   type: "uint64",            title: "Exclude (0, default), include (1) or return only (2) disabled routes" }
@@ -1580,7 +1580,7 @@ endpoints:
 
 - title: API Gateway functions
   path: "/apigw/function"
-  entrypoint: function
+  entrypoint: apigwFunction
   authentication: []
   imports:
     - github.com/cortezaproject/corteza-server/system/types
@@ -1591,8 +1591,7 @@ endpoints:
     path: "/"
     parameters:
       get:
-      - { name: functionID, type: "[]string", title: "Filter by function ID" }
-      - { name: routeID,    type: "string",   title: "Filter by route ID" }
+      - { name: routeID,    type: "uint64",   title: "Filter by route ID" }
       - { name: query,      type: "string",   title: "Filter functions" }
       - { name: deleted,    type: "uint64",   title: "Exclude (0, default), include (1) or return only (2) deleted functions" }
       - { name: disabled,   type: "uint64",   title: "Exclude (0, default), include (1) or return only (2) disabled functions" }
@@ -1609,7 +1608,7 @@ endpoints:
       - { name: weight,  type: uint64,                    title: "Function priority" }
       - { name: kind,    type: "types.ApigwFunctionKind", title: "Function kind" }
       - { name: ref,     type: string,                    title: "Function ref" }
-      - { name: params,  type: "types.FuncParams",        title: "Function parameters", parser: "types.ParseApigwfFunctionParams" }
+      - { name: params,  type: "types.ApigwFuncParams",        title: "Function parameters", parser: "types.ParseApigwfFunctionParams" }
   - name: update
     method: POST
     title: Update route details
@@ -1621,7 +1620,7 @@ endpoints:
       - { name: weight,   type: uint64,                    title: "Function priority" }
       - { name: kind,     type: "types.ApigwFunctionKind", title: "Function kind" }
       - { name: ref,      type: string,                    title: "Function ref" }
-      - { name: params,   type: "types.FuncParams",        title: "Function parameters", parser: "types.ParseApigwfFunctionParams" }
+      - { name: params,   type: "types.ApigwFuncParams",        title: "Function parameters", parser: "types.ParseApigwfFunctionParams" }
   - name: read
     method: GET
     title: Read function details

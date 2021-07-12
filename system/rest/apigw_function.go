@@ -11,42 +11,43 @@ import (
 )
 
 type (
-	Function struct {
+	ApigwFunction struct {
 		svc functionService
 		ac  templateAccessController
 	}
 
 	functionPayload struct {
-		*types.Function
+		*types.ApigwFunction
 	}
 
 	functionSetPayload struct {
-		Filter types.FunctionFilter `json:"filter"`
-		Set    []*functionPayload   `json:"set"`
+		Filter types.ApigwFunctionFilter `json:"filter"`
+		Set    []*functionPayload        `json:"set"`
 	}
 
 	functionService interface {
-		FindByID(ctx context.Context, ID uint64) (*types.Function, error)
-		Search(ctx context.Context, filter types.FunctionFilter) (types.FunctionSet, types.FunctionFilter, error)
-		Create(ctx context.Context, new *types.Function) (*types.Function, error)
-		Update(ctx context.Context, upd *types.Function) (*types.Function, error)
+		FindByID(ctx context.Context, ID uint64) (*types.ApigwFunction, error)
+		Search(ctx context.Context, filter types.ApigwFunctionFilter) (types.ApigwFunctionSet, types.ApigwFunctionFilter, error)
+		Create(ctx context.Context, new *types.ApigwFunction) (*types.ApigwFunction, error)
+		Update(ctx context.Context, upd *types.ApigwFunction) (*types.ApigwFunction, error)
 		DeleteByID(ctx context.Context, ID uint64) error
 		UndeleteByID(ctx context.Context, ID uint64) error
 		Definitions(context.Context, string) (interface{}, error)
 	}
 )
 
-func (Function) New() *Function {
-	return &Function{
+func (ApigwFunction) New() *ApigwFunction {
+	return &ApigwFunction{
 		svc: service.DefaultFunction,
 		ac:  service.DefaultAccessControl,
 	}
 }
 
-func (ctrl *Function) List(ctx context.Context, r *request.FunctionList) (interface{}, error) {
+func (ctrl *ApigwFunction) List(ctx context.Context, r *request.ApigwFunctionList) (interface{}, error) {
 	var (
 		err error
-		f   = types.FunctionFilter{
+		f   = types.ApigwFunctionFilter{
+			RouteID: r.RouteID,
 			Deleted: filter.State(r.Deleted),
 		}
 	)
@@ -64,10 +65,10 @@ func (ctrl *Function) List(ctx context.Context, r *request.FunctionList) (interf
 	return ctrl.makeFilterPayload(ctx, set, filter, err)
 }
 
-func (ctrl *Function) Create(ctx context.Context, r *request.FunctionCreate) (interface{}, error) {
+func (ctrl *ApigwFunction) Create(ctx context.Context, r *request.ApigwFunctionCreate) (interface{}, error) {
 	var (
 		err error
-		q   = &types.Function{
+		q   = &types.ApigwFunction{
 			Route:  r.RouteID,
 			Weight: r.Weight,
 			Kind:   string(r.Kind),
@@ -81,14 +82,14 @@ func (ctrl *Function) Create(ctx context.Context, r *request.FunctionCreate) (in
 	return ctrl.makePayload(ctx, q, err)
 }
 
-func (ctrl *Function) Read(ctx context.Context, r *request.FunctionRead) (interface{}, error) {
+func (ctrl *ApigwFunction) Read(ctx context.Context, r *request.ApigwFunctionRead) (interface{}, error) {
 	return ctrl.svc.FindByID(ctx, r.FunctionID)
 }
 
-func (ctrl *Function) Update(ctx context.Context, r *request.FunctionUpdate) (interface{}, error) {
+func (ctrl *ApigwFunction) Update(ctx context.Context, r *request.ApigwFunctionUpdate) (interface{}, error) {
 	var (
 		err error
-		q   = &types.Function{
+		q   = &types.ApigwFunction{
 			ID:     r.FunctionID,
 			Route:  r.RouteID,
 			Weight: r.Weight,
@@ -103,31 +104,31 @@ func (ctrl *Function) Update(ctx context.Context, r *request.FunctionUpdate) (in
 	return ctrl.makePayload(ctx, q, err)
 }
 
-func (ctrl *Function) Delete(ctx context.Context, r *request.FunctionDelete) (interface{}, error) {
+func (ctrl *ApigwFunction) Delete(ctx context.Context, r *request.ApigwFunctionDelete) (interface{}, error) {
 	return api.OK(), ctrl.svc.DeleteByID(ctx, r.FunctionID)
 }
 
-func (ctrl *Function) Definitions(ctx context.Context, r *request.FunctionDefinitions) (interface{}, error) {
+func (ctrl *ApigwFunction) Definitions(ctx context.Context, r *request.ApigwFunctionDefinitions) (interface{}, error) {
 	return ctrl.svc.Definitions(ctx, r.Kind)
 }
 
-func (ctrl *Function) Undelete(ctx context.Context, r *request.FunctionUndelete) (interface{}, error) {
+func (ctrl *ApigwFunction) Undelete(ctx context.Context, r *request.ApigwFunctionUndelete) (interface{}, error) {
 	return api.OK(), ctrl.svc.UndeleteByID(ctx, r.FunctionID)
 }
 
-func (ctrl *Function) makePayload(ctx context.Context, q *types.Function, err error) (*functionPayload, error) {
+func (ctrl *ApigwFunction) makePayload(ctx context.Context, q *types.ApigwFunction, err error) (*functionPayload, error) {
 	if err != nil || q == nil {
 		return nil, err
 	}
 
 	qq := &functionPayload{
-		Function: q,
+		ApigwFunction: q,
 	}
 
 	return qq, nil
 }
 
-func (ctrl *Function) makeFilterPayload(ctx context.Context, nn types.FunctionSet, f types.FunctionFilter, err error) (*functionSetPayload, error) {
+func (ctrl *ApigwFunction) makeFilterPayload(ctx context.Context, nn types.ApigwFunctionSet, f types.ApigwFunctionFilter, err error) (*functionSetPayload, error) {
 	if err != nil {
 		return nil, err
 	}

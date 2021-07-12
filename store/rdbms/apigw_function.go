@@ -6,8 +6,14 @@ import (
 	"github.com/cortezaproject/corteza-server/system/types"
 )
 
-func (s Store) convertApigwFunctionFilter(f types.FunctionFilter) (query squirrel.SelectBuilder, err error) {
+func (s Store) convertApigwFunctionFilter(f types.ApigwFunctionFilter) (query squirrel.SelectBuilder, err error) {
 	query = s.apigwFunctionsSelectBuilder()
+
 	query = filter.StateCondition(query, "af.deleted_at", f.Deleted)
+
+	if f.RouteID > 0 {
+		query = query.Where(squirrel.Eq{"af.rel_route": f.RouteID})
+	}
+
 	return
 }

@@ -11,7 +11,7 @@ type (
 
 	Handler interface {
 		Handler() handlerFunc
-		Meta(f *types.Function) functionMeta
+		Meta(f *types.ApigwFunction) functionMeta
 	}
 
 	handlerFunc func(context.Context, *scp, map[string]interface{}, functionHandler) error

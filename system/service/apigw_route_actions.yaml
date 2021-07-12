@@ -14,16 +14,16 @@ import:
 
 props:
   - name: route
-    type: "*types.Route"
+    type: "*types.ApigwRoute"
     fields: [ endpoint, ID ]
   - name: new
-    type: "*types.Route"
+    type: "*types.ApigwRoute"
     fields: [ endpoint, ID ]
   - name: update
-    type: "*types.Route"
+    type: "*types.ApigwRoute"
     fields: [ endpoint, ID ]
   - name: search
-    type: "*types.RouteFilter"
+    type: "*types.ApigwRouteFilter"
     fields: []
 
 actions:

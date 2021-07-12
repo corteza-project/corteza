@@ -28,7 +28,7 @@ func Route() *route {
 	})
 }
 
-func (svc *route) FindByID(ctx context.Context, ID uint64) (q *types.Route, err error) {
+func (svc *route) FindByID(ctx context.Context, ID uint64) (q *types.ApigwRoute, err error) {
 	var (
 		rProps = &routeActionProps{}
 	)
@@ -54,7 +54,7 @@ func (svc *route) FindByID(ctx context.Context, ID uint64) (q *types.Route, err 
 	return q, svc.recordAction(ctx, rProps, RouteActionLookup, err)
 }
 
-func (svc *route) Create(ctx context.Context, new *types.Route) (q *types.Route, err error) {
+func (svc *route) Create(ctx context.Context, new *types.ApigwRoute) (q *types.ApigwRoute, err error) {
 	var (
 		qProps = &routeActionProps{new: new}
 	)
@@ -89,10 +89,10 @@ func (svc *route) Create(ctx context.Context, new *types.Route) (q *types.Route,
 	return q, svc.recordAction(ctx, qProps, RouteActionCreate, err)
 }
 
-func (svc *route) Update(ctx context.Context, upd *types.Route) (q *types.Route, err error) {
+func (svc *route) Update(ctx context.Context, upd *types.ApigwRoute) (q *types.ApigwRoute, err error) {
 	var (
 		qProps = &routeActionProps{update: upd}
-		qq     *types.Route
+		qq     *types.ApigwRoute
 		e      error
 	)
 
@@ -133,7 +133,7 @@ func (svc *route) Update(ctx context.Context, upd *types.Route) (q *types.Route,
 func (svc *route) DeleteByID(ctx context.Context, ID uint64) (err error) {
 	var (
 		qProps = &routeActionProps{}
-		q      *types.Route
+		q      *types.ApigwRoute
 	)
 
 	err = func() (err error) {
@@ -170,7 +170,7 @@ func (svc *route) DeleteByID(ctx context.Context, ID uint64) (err error) {
 func (svc *route) UndeleteByID(ctx context.Context, ID uint64) (err error) {
 	var (
 		qProps = &routeActionProps{}
-		q      *types.Route
+		q      *types.ApigwRoute
 	)
 
 	err = func() (err error) {
@@ -204,7 +204,7 @@ func (svc *route) UndeleteByID(ctx context.Context, ID uint64) (err error) {
 	return svc.recordAction(ctx, qProps, RouteActionDelete, err)
 }
 
-func (svc *route) Search(ctx context.Context, filter types.RouteFilter) (r types.RouteSet, f types.RouteFilter, err error) {
+func (svc *route) Search(ctx context.Context, filter types.ApigwRouteFilter) (r types.ApigwRouteSet, f types.ApigwRouteFilter, err error) {
 	var (
 		aProps = &routeActionProps{search: &filter}
 	)

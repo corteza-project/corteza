@@ -18,31 +18,33 @@ import (
 
 type (
 	// Internal API interface
-	RouteAPI interface {
-		List(context.Context, *request.RouteList) (interface{}, error)
-		Create(context.Context, *request.RouteCreate) (interface{}, error)
-		Update(context.Context, *request.RouteUpdate) (interface{}, error)
-		Read(context.Context, *request.RouteRead) (interface{}, error)
-		Delete(context.Context, *request.RouteDelete) (interface{}, error)
-		Undelete(context.Context, *request.RouteUndelete) (interface{}, error)
+	ApigwFunctionAPI interface {
+		List(context.Context, *request.ApigwFunctionList) (interface{}, error)
+		Create(context.Context, *request.ApigwFunctionCreate) (interface{}, error)
+		Update(context.Context, *request.ApigwFunctionUpdate) (interface{}, error)
+		Read(context.Context, *request.ApigwFunctionRead) (interface{}, error)
+		Delete(context.Context, *request.ApigwFunctionDelete) (interface{}, error)
+		Undelete(context.Context, *request.ApigwFunctionUndelete) (interface{}, error)
+		Definitions(context.Context, *request.ApigwFunctionDefinitions) (interface{}, error)
 	}
 
 	// HTTP API interface
-	Route struct {
-		List     func(http.ResponseWriter, *http.Request)
-		Create   func(http.ResponseWriter, *http.Request)
-		Update   func(http.ResponseWriter, *http.Request)
-		Read     func(http.ResponseWriter, *http.Request)
-		Delete   func(http.ResponseWriter, *http.Request)
-		Undelete func(http.ResponseWriter, *http.Request)
+	ApigwFunction struct {
+		List        func(http.ResponseWriter, *http.Request)
+		Create      func(http.ResponseWriter, *http.Request)
+		Update      func(http.ResponseWriter, *http.Request)
+		Read        func(http.ResponseWriter, *http.Request)
+		Delete      func(http.ResponseWriter, *http.Request)
+		Undelete    func(http.ResponseWriter, *http.Request)
+		Definitions func(http.ResponseWriter, *http.Request)
 	}
 )
 
-func NewRoute(h RouteAPI) *Route {
-	return &Route{
+func NewApigwFunction(h ApigwFunctionAPI) *ApigwFunction {
+	return &ApigwFunction{
 		List: func(w http.ResponseWriter, r *http.Request) {
 			defer r.Body.Close()
-			params := request.NewRouteList()
+			params := request.NewApigwFunctionList()
 			if err := params.Fill(r); err != nil {
 				api.Send(w, r, err)
 				return
@@ -58,7 +60,7 @@ func NewRoute(h RouteAPI) *Route {
 		},
 		Create: func(w http.ResponseWriter, r *http.Request) {
 			defer r.Body.Close()
-			params := request.NewRouteCreate()
+			params := request.NewApigwFunctionCreate()
 			if err := params.Fill(r); err != nil {
 				api.Send(w, r, err)
 				return
@@ -74,7 +76,7 @@ func NewRoute(h RouteAPI) *Route {
 		},
 		Update: func(w http.ResponseWriter, r *http.Request) {
 			defer r.Body.Close()
-			params := request.NewRouteUpdate()
+			params := request.NewApigwFunctionUpdate()
 			if err := params.Fill(r); err != nil {
 				api.Send(w, r, err)
 				return
@@ -90,7 +92,7 @@ func NewRoute(h RouteAPI) *Route {
 		},
 		Read: func(w http.ResponseWriter, r *http.Request) {
 			defer r.Body.Close()
-			params := request.NewRouteRead()
+			params := request.NewApigwFunctionRead()
 			if err := params.Fill(r); err != nil {
 				api.Send(w, r, err)
 				return
@@ -106,7 +108,7 @@ func NewRoute(h RouteAPI) *Route {
 		},
 		Delete: func(w http.ResponseWriter, r *http.Request) {
 			defer r.Body.Close()
-			params := request.NewRouteDelete()
+			params := request.NewApigwFunctionDelete()
 			if err := params.Fill(r); err != nil {
 				api.Send(w, r, err)
 				return
@@ -122,7 +124,7 @@ func NewRoute(h RouteAPI) *Route {
 		},
 		Undelete: func(w http.ResponseWriter, r *http.Request) {
 			defer r.Body.Close()
-			params := request.NewRouteUndelete()
+			params := request.NewApigwFunctionUndelete()
 			if err := params.Fill(r); err != nil {
 				api.Send(w, r, err)
 				return
@@ -136,17 +138,34 @@ func NewRoute(h RouteAPI) *Route {
 
 			api.Send(w, r, value)
 		},
+		Definitions: func(w http.ResponseWriter, r *http.Request) {
+			defer r.Body.Close()
+			params := request.NewApigwFunctionDefinitions()
+			if err := params.Fill(r); err != nil {
+				api.Send(w, r, err)
+				return
+			}
+
+			value, err := h.Definitions(r.Context(), params)
+			if err != nil {
+				api.Send(w, r, err)
+				return
+			}
+
+			api.Send(w, r, value)
+		},
 	}
 }
 
-func (h Route) MountRoutes(r chi.Router, middlewares ...func(http.Handler) http.Handler) {
+func (h ApigwFunction) MountRoutes(r chi.Router, middlewares ...func(http.Handler) http.Handler) {
 	r.Group(func(r chi.Router) {
 		r.Use(middlewares...)
-		r.Get("/apigw/route/", h.List)
-		r.Post("/apigw/route", h.Create)
-		r.Put("/apigw/route/{routeID}", h.Update)
-		r.Get("/apigw/route/{routeID}", h.Read)
-		r.Delete("/apigw/route/{routeID}", h.Delete)
-		r.Post("/apigw/route/{routeID}/undelete", h.Undelete)
+		r.Get("/apigw/function/", h.List)
+		r.Put("/apigw/function", h.Create)
+		r.Post("/apigw/function/{functionID}", h.Update)
+		r.Get("/apigw/function/{functionID}", h.Read)
+		r.Delete("/apigw/function/{functionID}", h.Delete)
+		r.Post("/apigw/function/{functionID}/undelete", h.Undelete)
+		r.Get("/apigw/function/def", h.Definitions)
 	})
 }

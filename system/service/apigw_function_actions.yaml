@@ -14,7 +14,7 @@ import:
 
 props:
   - name: function
-    type: "*types.Function"
+    type: "*types.ApigwFunction"
     fields: [ ID, ref ]
   # - name: new
   #   type: "*types.Route"
@@ -23,7 +23,7 @@ props:
   #   type: "*types.Route"
   #   fields: [ endpoint, ID ]
   - name: search
-    type: "*types.FunctionFilter"
+    type: "*types.ApigwFunctionFilter"
     fields: []
 
 actions:

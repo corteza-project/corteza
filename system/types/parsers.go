@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 )
 
-func ParseApigwfFunctionParams(ss []string) (p FuncParams, err error) {
-	p = FuncParams{}
+func ParseApigwfFunctionParams(ss []string) (p ApigwFuncParams, err error) {
+	p = ApigwFuncParams{}
 	return p, parseStringsInput(ss, p)
 }
 

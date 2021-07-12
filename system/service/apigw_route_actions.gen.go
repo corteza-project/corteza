@@ -6,7 +6,7 @@ package service
 // the code is regenerated.
 //
 // Definitions file that controls how this file is generated:
-// system/service/route_actions.yaml
+// system/service/apigw_route_actions.yaml
 
 import (
 	"context"
@@ -20,10 +20,10 @@ import (
 
 type (
 	routeActionProps struct {
-		route  *types.Route
-		new    *types.Route
-		update *types.Route
-		search *types.RouteFilter
+		route  *types.ApigwRoute
+		new    *types.ApigwRoute
+		update *types.ApigwRoute
+		search *types.ApigwRouteFilter
 	}
 
 	routeAction struct {
@@ -57,7 +57,7 @@ var (
 //
 // This function is auto-generated.
 //
-func (p *routeActionProps) setRoute(route *types.Route) *routeActionProps {
+func (p *routeActionProps) setRoute(route *types.ApigwRoute) *routeActionProps {
 	p.route = route
 	return p
 }
@@ -68,7 +68,7 @@ func (p *routeActionProps) setRoute(route *types.Route) *routeActionProps {
 //
 // This function is auto-generated.
 //
-func (p *routeActionProps) setNew(new *types.Route) *routeActionProps {
+func (p *routeActionProps) setNew(new *types.ApigwRoute) *routeActionProps {
 	p.new = new
 	return p
 }
@@ -79,7 +79,7 @@ func (p *routeActionProps) setNew(new *types.Route) *routeActionProps {
 //
 // This function is auto-generated.
 //
-func (p *routeActionProps) setUpdate(update *types.Route) *routeActionProps {
+func (p *routeActionProps) setUpdate(update *types.ApigwRoute) *routeActionProps {
 	p.update = update
 	return p
 }
@@ -90,7 +90,7 @@ func (p *routeActionProps) setUpdate(update *types.Route) *routeActionProps {
 //
 // This function is auto-generated.
 //
-func (p *routeActionProps) setSearch(search *types.RouteFilter) *routeActionProps {
+func (p *routeActionProps) setSearch(search *types.ApigwRouteFilter) *routeActionProps {
 	p.search = search
 	return p
 }

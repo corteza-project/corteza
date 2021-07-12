@@ -11,41 +11,41 @@ import (
 )
 
 type (
-	Route struct {
+	ApigwRoute struct {
 		svc routeService
 		ac  templateAccessController
 	}
 
 	routePayload struct {
-		*types.Route
+		*types.ApigwRoute
 	}
 
 	routeSetPayload struct {
-		Filter types.RouteFilter `json:"filter"`
-		Set    []*routePayload   `json:"set"`
+		Filter types.ApigwRouteFilter `json:"filter"`
+		Set    []*routePayload        `json:"set"`
 	}
 
 	routeService interface {
-		FindByID(ctx context.Context, ID uint64) (*types.Route, error)
-		Create(ctx context.Context, new *types.Route) (*types.Route, error)
-		Update(ctx context.Context, upd *types.Route) (*types.Route, error)
+		FindByID(ctx context.Context, ID uint64) (*types.ApigwRoute, error)
+		Create(ctx context.Context, new *types.ApigwRoute) (*types.ApigwRoute, error)
+		Update(ctx context.Context, upd *types.ApigwRoute) (*types.ApigwRoute, error)
 		DeleteByID(ctx context.Context, ID uint64) error
 		UndeleteByID(ctx context.Context, ID uint64) error
-		Search(ctx context.Context, filter types.RouteFilter) (types.RouteSet, types.RouteFilter, error)
+		Search(ctx context.Context, filter types.ApigwRouteFilter) (types.ApigwRouteSet, types.ApigwRouteFilter, error)
 	}
 )
 
-func (Route) New() *Route {
-	return &Route{
+func (ApigwRoute) New() *ApigwRoute {
+	return &ApigwRoute{
 		svc: service.DefaultRoute,
 		ac:  service.DefaultAccessControl,
 	}
 }
 
-func (ctrl *Route) List(ctx context.Context, r *request.RouteList) (interface{}, error) {
+func (ctrl *ApigwRoute) List(ctx context.Context, r *request.ApigwRouteList) (interface{}, error) {
 	var (
 		err error
-		f   = types.RouteFilter{
+		f   = types.ApigwRouteFilter{
 			Deleted: filter.State(r.Deleted),
 		}
 	)
@@ -63,10 +63,10 @@ func (ctrl *Route) List(ctx context.Context, r *request.RouteList) (interface{},
 	return ctrl.makeFilterPayload(ctx, set, filter, err)
 }
 
-func (ctrl *Route) Create(ctx context.Context, r *request.RouteCreate) (interface{}, error) {
+func (ctrl *ApigwRoute) Create(ctx context.Context, r *request.ApigwRouteCreate) (interface{}, error) {
 	var (
 		err error
-		q   = &types.Route{
+		q   = &types.ApigwRoute{
 			Endpoint: r.Endpoint,
 			Method:   r.Method,
 			Debug:    r.Debug,
@@ -79,14 +79,14 @@ func (ctrl *Route) Create(ctx context.Context, r *request.RouteCreate) (interfac
 	return ctrl.makePayload(ctx, q, err)
 }
 
-func (ctrl *Route) Read(ctx context.Context, r *request.RouteRead) (interface{}, error) {
+func (ctrl *ApigwRoute) Read(ctx context.Context, r *request.ApigwRouteRead) (interface{}, error) {
 	return ctrl.svc.FindByID(ctx, r.RouteID)
 }
 
-func (ctrl *Route) Update(ctx context.Context, r *request.RouteUpdate) (interface{}, error) {
+func (ctrl *ApigwRoute) Update(ctx context.Context, r *request.ApigwRouteUpdate) (interface{}, error) {
 	var (
 		err error
-		q   = &types.Route{
+		q   = &types.ApigwRoute{
 			ID:       r.RouteID,
 			Endpoint: r.Endpoint,
 			Method:   r.Method,
@@ -101,27 +101,27 @@ func (ctrl *Route) Update(ctx context.Context, r *request.RouteUpdate) (interfac
 	return ctrl.makePayload(ctx, q, err)
 }
 
-func (ctrl *Route) Delete(ctx context.Context, r *request.RouteDelete) (interface{}, error) {
+func (ctrl *ApigwRoute) Delete(ctx context.Context, r *request.ApigwRouteDelete) (interface{}, error) {
 	return api.OK(), ctrl.svc.DeleteByID(ctx, r.RouteID)
 }
 
-func (ctrl *Route) Undelete(ctx context.Context, r *request.RouteUndelete) (interface{}, error) {
+func (ctrl *ApigwRoute) Undelete(ctx context.Context, r *request.ApigwRouteUndelete) (interface{}, error) {
 	return api.OK(), ctrl.svc.UndeleteByID(ctx, r.RouteID)
 }
 
-func (ctrl *Route) makePayload(ctx context.Context, q *types.Route, err error) (*routePayload, error) {
+func (ctrl *ApigwRoute) makePayload(ctx context.Context, q *types.ApigwRoute, err error) (*routePayload, error) {
 	if err != nil || q == nil {
 		return nil, err
 	}
 
 	qq := &routePayload{
-		Route: q,
+		ApigwRoute: q,
 	}
 
 	return qq, nil
 }
 
-func (ctrl *Route) makeFilterPayload(ctx context.Context, nn types.RouteSet, f types.RouteFilter, err error) (*routeSetPayload, error) {
+func (ctrl *ApigwRoute) makeFilterPayload(ctx context.Context, nn types.ApigwRouteSet, f types.ApigwRouteFilter, err error) (*routeSetPayload, error) {
 	if err != nil {
 		return nil, err
 	}

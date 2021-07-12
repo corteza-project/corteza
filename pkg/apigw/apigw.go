@@ -10,8 +10,8 @@ import (
 
 type (
 	storer interface {
-		SearchApigwRoutes(ctx context.Context, f types.RouteFilter) (types.RouteSet, types.RouteFilter, error)
-		SearchApigwFunctions(ctx context.Context, f types.FunctionFilter) (types.FunctionSet, types.FunctionFilter, error)
+		SearchApigwRoutes(ctx context.Context, f types.ApigwRouteFilter) (types.ApigwRouteSet, types.ApigwRouteFilter, error)
+		SearchApigwFunctions(ctx context.Context, f types.ApigwFunctionFilter) (types.ApigwFunctionSet, types.ApigwFunctionFilter, error)
 	}
 
 	apigw struct {
@@ -64,7 +64,7 @@ func (s *apigw) Reload(ctx context.Context) {
 }
 
 func (s *apigw) loadRoutes(ctx context.Context) (rr []*route, err error) {
-	routes, _, err := s.storer.SearchApigwRoutes(ctx, types.RouteFilter{Enabled: true})
+	routes, _, err := s.storer.SearchApigwRoutes(ctx, types.ApigwRouteFilter{Enabled: true})
 
 	if err != nil {
 		return
@@ -83,8 +83,8 @@ func (s *apigw) loadRoutes(ctx context.Context) (rr []*route, err error) {
 	return
 }
 
-func (s *apigw) loadFunctions(ctx context.Context, route uint64) (ff []*types.Function, err error) {
-	ff, _, err = s.storer.SearchApigwFunctions(ctx, types.FunctionFilter{})
+func (s *apigw) loadFunctions(ctx context.Context, route uint64) (ff []*types.ApigwFunction, err error) {
+	ff, _, err = s.storer.SearchApigwFunctions(ctx, types.ApigwFunctionFilter{RouteID: route})
 	return
 }
 

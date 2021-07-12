@@ -22,7 +22,7 @@ func NewVerifierQueryParam() verifierQueryParam {
 	return verifierQueryParam{}
 }
 
-func (h verifierQueryParam) Meta(f *types.Function) functionMeta {
+func (h verifierQueryParam) Meta(f *types.ApigwFunction) functionMeta {
 	return functionMeta{
 		Step:   0,
 		Name:   "verifierQueryParam",
@@ -40,7 +40,7 @@ func (h verifierQueryParam) Meta(f *types.Function) functionMeta {
 	}
 }
 
-func (h verifierOrigin) Meta(f *types.Function) functionMeta {
+func (h verifierOrigin) Meta(f *types.ApigwFunction) functionMeta {
 	return functionMeta{
 		Step:   0,
 		Name:   "verifierOrigin",

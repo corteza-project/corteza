@@ -25,7 +25,7 @@ func NewExpediterRedirection() expediterRedirection {
 	return expediterRedirection{}
 }
 
-func (h expediterRedirection) Meta(f *types.Function) functionMeta {
+func (h expediterRedirection) Meta(f *types.ApigwFunction) functionMeta {
 	return functionMeta{
 		Step:   3,
 		Name:   "expediterRedirection",

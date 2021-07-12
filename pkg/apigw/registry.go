@@ -40,7 +40,7 @@ func (r *registry) Get(identifier string) (Handler, error) {
 
 func (r *registry) All() (list functionMetaList) {
 	for _, handler := range r.h {
-		m := handler.Meta(&types.Function{})
+		m := handler.Meta(&types.ApigwFunction{})
 		list = append(list, &m)
 	}
 

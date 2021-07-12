@@ -24,11 +24,11 @@ var _ = errors.Is
 // SearchApigwFunctions returns all matching rows
 //
 // This function calls convertApigwFunctionFilter with the given
-// types.FunctionFilter and expects to receive a working squirrel.SelectBuilder
-func (s Store) SearchApigwFunctions(ctx context.Context, f types.FunctionFilter) (types.FunctionSet, types.FunctionFilter, error) {
+// types.ApigwFunctionFilter and expects to receive a working squirrel.SelectBuilder
+func (s Store) SearchApigwFunctions(ctx context.Context, f types.ApigwFunctionFilter) (types.ApigwFunctionSet, types.ApigwFunctionFilter, error) {
 	var (
 		err error
-		set []*types.Function
+		set []*types.ApigwFunction
 		q   squirrel.SelectBuilder
 	)
 
@@ -112,11 +112,11 @@ func (s Store) fetchFullPageOfApigwFunctions(
 	sort filter.SortExprSet,
 	cursor *filter.PagingCursor,
 	reqItems uint,
-	check func(*types.Function) (bool, error),
+	check func(*types.ApigwFunction) (bool, error),
 	cursorCond func(*filter.PagingCursor) squirrel.Sqlizer,
-) (set []*types.Function, prev, next *filter.PagingCursor, err error) {
+) (set []*types.ApigwFunction, prev, next *filter.PagingCursor, err error) {
 	var (
-		aux []*types.Function
+		aux []*types.ApigwFunction
 
 		// When cursor for a previous page is used it's marked as reversed
 		// This tells us to flip the descending flag on all used sort keys
@@ -137,7 +137,7 @@ func (s Store) fetchFullPageOfApigwFunctions(
 		hasNext bool
 	)
 
-	set = make([]*types.Function, 0, DefaultSliceCapacity)
+	set = make([]*types.ApigwFunction, 0, DefaultSliceCapacity)
 
 	for try := 0; try < MaxRefetches; try++ {
 		if cursor != nil {
@@ -235,12 +235,12 @@ func (s Store) fetchFullPageOfApigwFunctions(
 func (s Store) QueryApigwFunctions(
 	ctx context.Context,
 	q squirrel.Sqlizer,
-	check func(*types.Function) (bool, error),
-) ([]*types.Function, error) {
+	check func(*types.ApigwFunction) (bool, error),
+) ([]*types.ApigwFunction, error) {
 	var (
-		tmp = make([]*types.Function, 0, DefaultSliceCapacity)
-		set = make([]*types.Function, 0, DefaultSliceCapacity)
-		res *types.Function
+		tmp = make([]*types.ApigwFunction, 0, DefaultSliceCapacity)
+		set = make([]*types.ApigwFunction, 0, DefaultSliceCapacity)
+		res *types.ApigwFunction
 
 		// Query rows with
 		rows, err = s.Query(ctx, q)
@@ -272,21 +272,21 @@ func (s Store) QueryApigwFunctions(
 }
 
 // LookupApigwFunctionByID searches for function by ID
-func (s Store) LookupApigwFunctionByID(ctx context.Context, id uint64) (*types.Function, error) {
+func (s Store) LookupApigwFunctionByID(ctx context.Context, id uint64) (*types.ApigwFunction, error) {
 	return s.execLookupApigwFunction(ctx, squirrel.Eq{
 		s.preprocessColumn("af.id", ""): store.PreprocessValue(id, ""),
 	})
 }
 
 // LookupApigwFunctionByRoute searches for function by route
-func (s Store) LookupApigwFunctionByRoute(ctx context.Context, route string) (*types.Function, error) {
+func (s Store) LookupApigwFunctionByRoute(ctx context.Context, route string) (*types.ApigwFunction, error) {
 	return s.execLookupApigwFunction(ctx, squirrel.Eq{
 		s.preprocessColumn("af.rel_route", ""): store.PreprocessValue(route, ""),
 	})
 }
 
 // CreateApigwFunction creates one or more rows in apigw_functions table
-func (s Store) CreateApigwFunction(ctx context.Context, rr ...*types.Function) (err error) {
+func (s Store) CreateApigwFunction(ctx context.Context, rr ...*types.ApigwFunction) (err error) {
 	for _, res := range rr {
 		err = s.checkApigwFunctionConstraints(ctx, res)
 		if err != nil {
@@ -303,12 +303,12 @@ func (s Store) CreateApigwFunction(ctx context.Context, rr ...*types.Function) (
 }
 
 // UpdateApigwFunction updates one or more existing rows in apigw_functions
-func (s Store) UpdateApigwFunction(ctx context.Context, rr ...*types.Function) error {
+func (s Store) UpdateApigwFunction(ctx context.Context, rr ...*types.ApigwFunction) error {
 	return s.partialApigwFunctionUpdate(ctx, nil, rr...)
 }
 
 // partialApigwFunctionUpdate updates one or more existing rows in apigw_functions
-func (s Store) partialApigwFunctionUpdate(ctx context.Context, onlyColumns []string, rr ...*types.Function) (err error) {
+func (s Store) partialApigwFunctionUpdate(ctx context.Context, onlyColumns []string, rr ...*types.ApigwFunction) (err error) {
 	for _, res := range rr {
 		err = s.checkApigwFunctionConstraints(ctx, res)
 		if err != nil {
@@ -330,7 +330,7 @@ func (s Store) partialApigwFunctionUpdate(ctx context.Context, onlyColumns []str
 }
 
 // DeleteApigwFunction Deletes one or more rows from apigw_functions table
-func (s Store) DeleteApigwFunction(ctx context.Context, rr ...*types.Function) (err error) {
+func (s Store) DeleteApigwFunction(ctx context.Context, rr ...*types.ApigwFunction) (err error) {
 	for _, res := range rr {
 
 		err = s.execDeleteApigwFunctions(ctx, squirrel.Eq{
@@ -357,8 +357,8 @@ func (s Store) TruncateApigwFunctions(ctx context.Context) error {
 }
 
 // execLookupApigwFunction prepares ApigwFunction query and executes it,
-// returning types.Function (or error)
-func (s Store) execLookupApigwFunction(ctx context.Context, cnd squirrel.Sqlizer) (res *types.Function, err error) {
+// returning types.ApigwFunction (or error)
+func (s Store) execLookupApigwFunction(ctx context.Context, cnd squirrel.Sqlizer) (res *types.ApigwFunction, err error) {
 	var (
 		row rowScanner
 	)
@@ -391,11 +391,11 @@ func (s Store) execDeleteApigwFunctions(ctx context.Context, cnd squirrel.Sqlize
 	return s.Exec(ctx, s.DeleteBuilder(s.apigwFunctionTable("af")).Where(cnd))
 }
 
-func (s Store) internalApigwFunctionRowScanner(row rowScanner) (res *types.Function, err error) {
-	res = &types.Function{}
+func (s Store) internalApigwFunctionRowScanner(row rowScanner) (res *types.ApigwFunction, err error) {
+	res = &types.ApigwFunction{}
 
 	if _, has := s.config.RowScanners["apigwFunction"]; has {
-		scanner := s.config.RowScanners["apigwFunction"].(func(_ rowScanner, _ *types.Function) error)
+		scanner := s.config.RowScanners["apigwFunction"].(func(_ rowScanner, _ *types.ApigwFunction) error)
 		err = scanner(row, res)
 	} else {
 		err = row.Scan(
@@ -476,11 +476,11 @@ func (Store) sortableApigwFunctionColumns() map[string]string {
 	}
 }
 
-// internalApigwFunctionEncoder encodes fields from types.Function to store.Payload (map)
+// internalApigwFunctionEncoder encodes fields from types.ApigwFunction to store.Payload (map)
 //
 // Encoding is done by using generic approach or by calling encodeApigwFunction
 // func when rdbms.customEncoder=true
-func (s Store) internalApigwFunctionEncoder(res *types.Function) store.Payload {
+func (s Store) internalApigwFunctionEncoder(res *types.ApigwFunction) store.Payload {
 	return store.Payload{
 		"id":         res.ID,
 		"rel_route":  res.Route,
@@ -506,7 +506,7 @@ func (s Store) internalApigwFunctionEncoder(res *types.Function) store.Payload {
 // Known issue:
 //   when collecting cursor values for query that sorts by unique column with partial index (ie: unique handle on
 //   undeleted items)
-func (s Store) collectApigwFunctionCursorValues(res *types.Function, cc ...*filter.SortExpr) *filter.PagingCursor {
+func (s Store) collectApigwFunctionCursorValues(res *types.ApigwFunction, cc ...*filter.SortExpr) *filter.PagingCursor {
 	var (
 		cursor = &filter.PagingCursor{LThen: filter.SortExprSet(cc).Reversed()}
 
@@ -542,7 +542,7 @@ func (s Store) collectApigwFunctionCursorValues(res *types.Function, cc ...*filt
 //
 // Using built-in constraint checking would be more performant but unfortunately we cannot rely
 // on the full support (MySQL does not support conditional indexes)
-func (s *Store) checkApigwFunctionConstraints(ctx context.Context, res *types.Function) error {
+func (s *Store) checkApigwFunctionConstraints(ctx context.Context, res *types.ApigwFunction) error {
 	// Consider resource valid when all fields in unique constraint check lookups
 	// have valid (non-empty) value
 	//
